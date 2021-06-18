@@ -1,0 +1,19 @@
+- Define "Dir"
+- Delete any old marks
+- Create marking environments
+- For each student
+  - Setting up the starter code
+  - Deleting what needs to be injected from the starter code
+  - Making sure everything else is a perfect
+  - Running the env
+  - Creating Marking Receipt and then putting it in the correct directory
+- Delete marking environments
+- Create the CSV File
+- Print Out Analytics and also write them in a file
+
+Notes:
+- Should be designed in a way that there is always only one autograder file and that it should mark under the precondition that it has everything else in a perfect state when marking a certain section.
+
+- Need to speak to Deval and see how his code marks one solution so far.
+
+- The script should automatically detect the final mark from the autograder output and create its analytics based on that analysis.
