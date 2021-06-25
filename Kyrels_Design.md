@@ -56,12 +56,18 @@ assignments:
         submission_files:
             - file1:
         marking_files:
-            -
+            - file1 #
         test_files:
             - timeout_per_file_secs: timeout in seconds per file
             - test_file_1:
-                - command 1
-                - command 2
+                prep_commands:
+                    - command 1
+                    - command 2
+                    - command 3
+                marking_commands:
+                    - command 1
+                    - command 2
+                    - command 3
         perfect_files:
             - perf_file1
             - perf_file2
@@ -75,8 +81,14 @@ assignments:
         test_files:
             - timeout_per_file_secs: timeout in seconds per file
             - test_file_1:
-                - command 1
-                - command 2
+                prep_commands:
+                    - command 1
+                    - command 2
+                    - command 3
+                marking_commands:
+                    - command 1
+                    - command 2
+                    - command 3
         perfect_files:
             - perf_file1
             - perf_file2
@@ -85,7 +97,4 @@ output:
     file_name: filename
     to_percents: True/False # final values to percents as QOL feature.
 does_clean_flag: True/False # burn time full wiping the leftovers?
-```
-
-
 ```

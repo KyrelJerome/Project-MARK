@@ -14,7 +14,7 @@ class ResultsModel():
         self.child_questions.append()
     
     def set_question_name(self, name:str)-> None:
-    '''Question name is not required, without it, questions will be numbered.'''
+        """Question name is not required, without it, questions will be numbered."""
         self.question_name = name
     
     def set_question_mark(self, mark)-> None:
