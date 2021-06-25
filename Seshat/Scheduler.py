@@ -1,8 +1,9 @@
+from Seshat.Common import AssignmentModel
 import Common
 '''
     Schedules grading from within each
 
 '''
 
-class GradeScheduler:
-    def __init__(self, assignmentModel: ):
+class Scheduler:
+    def __init__(self, assignmentModel: AssignmentModel):
