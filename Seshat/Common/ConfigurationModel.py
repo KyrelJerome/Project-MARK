@@ -1,0 +1,3 @@
+import Common
+
+class ConfigurationModel
