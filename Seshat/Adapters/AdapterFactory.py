@@ -1,10 +1,9 @@
 
-
+import AdaptersConsts
 class AdapterFactory:
 
     @staticmethod
-    def getAdapter(id: str):
+    def getAdapter(adapter_id: str):
         switch (id):
-            case JSON_ADAPTER_ID:
-                return 
-        
+            default:
+                return None

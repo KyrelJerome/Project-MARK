@@ -1,6 +1,6 @@
 '''
     Carries the task of building an environment for use when marking.
-    Abstract class used to
+    Creates the folder structures required.
 '''
 
 class EnvBuilder:

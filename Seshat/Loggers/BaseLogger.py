@@ -1,3 +1,4 @@
+
 class BaseLogger:
 
     def saveResults(self, filepath, output):
