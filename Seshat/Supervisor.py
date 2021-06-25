@@ -1,5 +1,11 @@
 import Common
 import Scheduler
+
+
+'''
+    Carries the task of building an environment for use when marking.
+    Creates the folder structures required for consistent and safe marking.
+'''
 class Supervisor:
     def __init__(self, configuration, working_path) -> None:
         '''
