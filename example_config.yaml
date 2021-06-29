@@ -1,0 +1,46 @@
+assignments:
+    - a1:
+        student_submission_directory:
+            - dir_name
+        starter_files:
+            - dir_name
+        test_files:
+            - test_1:
+                prep_commands:
+                    - command 1
+                    - command 2
+                    - command 3
+                marking_commands:
+                    - test_1:
+                        command: python3 tester.py arg1 arg2
+                        timeout: 40 #optional
+                        worth:
+                    - test_2:
+                        command: python3 tester.py arg1 arg2
+                        timeout: 60 #optional
+                        worth:
+        total_worth: val_here
+    - a2:
+        student_submission_directory:
+            - dir_name
+        starter_files:
+            - dir_name
+        test_files:
+            - test_1:
+                prep_commands:
+                    - command 1
+                    - command 2
+                    - command 3
+                marking_commands:
+                    - command1_name:
+                        command: python3 tester.py arg1 arg2
+                        timeout: 40 #optional
+                    - command2_name:
+                        command: python3 tester.py arg1 arg2
+                        timeout: 60 #optional
+        total_worth: val_here
+
+output:
+    file_name: filename
+    to_percents: True/False # final values to percents as QOL feature.
+does_clean_flag: True/False # burn time full wiping the leftovers?

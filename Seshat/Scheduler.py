@@ -11,3 +11,6 @@ class Scheduler:
         for runtime in AssignmentModel:
             # create fresh set if desired.
             continue
+
+            result = Adapter().parse(output)
+            result.add_preparsed(output)

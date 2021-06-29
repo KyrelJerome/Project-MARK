@@ -6,6 +6,7 @@ class ResultsModel():
         self.question_mark = 100 # must be set
         self.question_worth = None # must be set
         self.question_name = None
+        self.pre_parsed = ""
 
     def add_result(self, child_result)-> None:
         self.child_questions.append(child_result)
@@ -19,4 +20,6 @@ class ResultsModel():
     
     def set_question_mark(self, mark)-> None:
         self.question_mark = mark
+    def add_pre_parsed(self, output)-> None:
+        self.pre_parsed = output
 
