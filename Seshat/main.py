@@ -1,4 +1,5 @@
 # import Supervisor
+import Common
 import argparse
 import yaml
 import sys
@@ -11,12 +12,10 @@ def run()-> None:
     args = parse_arguments()
 
     config = load_config(args.config_path)
+    config_object = Common.ConfigurationModel(config)
 
-
-    # print(config["assignments"][1]["name"])
-
-    # sup = Supervisor(config, None)
-    # Supervisor.run(folder_path, assignments)
+    # sup = Supervisor(config_object)
+    # sup.run(folder_path, assignments)
 
 
 def parse_arguments():

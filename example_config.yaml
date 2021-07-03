@@ -2,29 +2,70 @@
 program:
     M.A.R.K
 assignments:
-    - a1:
+    # ==========================================================================
+    - name:
+          assignment1
       student_submission_directory:
           dir_name1
-      starter_directory:
+      starter_code_directory:
           dir_name
+      file_name_pattern:
+          filename # i.e. UTORID-CSC148-Assignment#-Result.txt
       tests:
-          - test_suite_1:
-              prep_commands:
-                  - command 1
-                  - command 2
-                  - command 3
-              marking_commands:
-                  - test_1:
-                      command: python3 tester.py arg1 arg2
-                      timeout: 40 # if not needed, set as -1
-                      worth: 0.2  # needs to be between 0 and 1
-                  - test_2:
-                      command: python3 tester.py arg1 arg2
-                      timeout: 60 # if not needed, set as -1
-                      worth: 20   # needs to be between 0 and 1
-      total_worth: val_here
-output:
-    file_name: filename
-    to_percents: True/False # final values to percents as QOL feature.
+          - name:
+                test_suite_1
+            prep_commands:
+                - command 1
+                - command 2
+                - command 3
+            marking_commands: # things under here needs to be fixed.
+                - command: python3 autograder1.py arg1 arg2
+                  timeout: 40 # if not needed, set as -1
+                  worth: 0.2  # needs to be between 0 and 1
+                - command: python3 autograder2.py arg1 arg2
+                  timeout: 60 # if not needed, set as -1
+                  worth: 0.8   # needs to be between 0 and 1
+      total_worth:
+          val_here
+      creates_analytics_file:
+          True/False # it can save it in a txt file ready for usage
+      creates_csv_file:
+          True/False
+      to_percents:
+          True/False # final values to percents as QOL feature.
+    # ==========================================================================
+    - name:
+          assignment2
+      student_submission_directory:
+          dir_name1
+      starter_code_directory:
+          dir_name
+      file_name_pattern:
+          filename # i.e. UTORID-CSC148-Assignment#-Result.txt
+      tests:
+          - name:
+                test_suite_1
+            prep_commands:
+                - command 1
+                - command 2
+                - command 3
+            marking_commands: # things under here needs to be fixed.
+                - command: python3 autograder1.py arg1 arg2
+                  timeout: 40 # if not needed, set as -1
+                  worth: 0.2  # needs to be between 0 and 1
+                - command: python3 autograder2.py arg1 arg2
+                  timeout: 60 # if not needed, set as -1
+                  worth: 0.8   # needs to be between 0 and 1
+      total_worth:
+          val_here
+      creates_analytics_file:
+          True/False # it can save it in a txt file ready for usage
+      creates_csv_file:
+          True/False
+      to_percents:
+          True/False # final values to percents as QOL feature.
+    # ==========================================================================
+          
 does_clean_flag: True/False # burn time full wiping the leftovers?
+
 ...
