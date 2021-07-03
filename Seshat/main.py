@@ -14,8 +14,8 @@ def run()-> None:
     config = load_config(args.config_path)
     config_object = Common.ConfigurationModel(config)
 
-    # sup = Supervisor(config_object)
-    # sup.run(folder_path, assignments)
+    sup = Supervisor(config_object)
+    sup.run("./")
 
 
 def parse_arguments():
