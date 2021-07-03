@@ -1,26 +1,30 @@
+---
+program:
+    M.A.R.K
 assignments:
     - a1:
-        student_submission_directory:
-            - dir_name
-        starter_files:
-            - dir_name
-        tests:
-            - test_suite_1:
-                prep_commands:
-                    - command 1
-                    - command 2
-                    - command 3
-                marking_commands:
-                    - test_1:
-                        command: python3 tester.py arg1 arg2
-                        timeout: 40 #optional
-                        worth: 20
-                    - test_2:
-                        command: python3 tester.py arg1 arg2
-                        timeout: 60 #optional
-                        worth: 20
-        total_worth: val_here
+      student_submission_directory:
+          dir_name1
+      starter_directory:
+          dir_name
+      tests:
+          - test_suite_1:
+              prep_commands:
+                  - command 1
+                  - command 2
+                  - command 3
+              marking_commands:
+                  - test_1:
+                      command: python3 tester.py arg1 arg2
+                      timeout: 40 # if not needed, set as -1
+                      worth: 0.2  # needs to be between 0 and 1
+                  - test_2:
+                      command: python3 tester.py arg1 arg2
+                      timeout: 60 # if not needed, set as -1
+                      worth: 20   # needs to be between 0 and 1
+      total_worth: val_here
 output:
     file_name: filename
     to_percents: True/False # final values to percents as QOL feature.
 does_clean_flag: True/False # burn time full wiping the leftovers?
+...
