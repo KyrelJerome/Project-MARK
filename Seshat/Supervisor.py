@@ -21,7 +21,6 @@ class Supervisor:
 
             print("- Creating container for \"{}\".\n".format(assignment.name))
 
-            # Double check where exactly "container_path" would be.
             container_path = path + assignment.name + "-marking-container"
             os.mkdir(container_path)
 
@@ -36,9 +35,11 @@ class Supervisor:
             print("- Supervisor giving the Logger/Cataloguer the results\n")
             lc_box = Loggers.textLoggerCatalogur(resultsModel)
 
-            csv_path = lc_box.createCSV(container_path)
-            analytics_path = lc_box.createAnalytics(container_path)
-            #zip_recipts_dir_path = lc_box.zipTxtReceipts(recipts_dir_path)
+            # parameter tells the method where to save the CSV and with what name, it also retuns the path of the said csv
+            csv_path = lc_box.createCSV(container_path, assignment.name)
+            # parameter tells the method where to save the analytics and with what name, it also retuns the path of the said analytics
+            analytics_path = lc_box.createAnalytics(container_path, assignment.name)
+
 
             print("- Supervisor has placed the following files in the mentioned path:\n")
             print("\t- \"{}\"'s CSV file: \"{}\"\n".format(assignment.name, csv_path))
