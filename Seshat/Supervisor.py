@@ -31,15 +31,14 @@ class Supervisor:
             assignment_scheduler.markAll()
 
             print("- Supervisor receiving results from the Scheduler.\n")
-            resultsModel = assignment_scheduler.getAssignmentResults()
+            resultsModel, recipts_dir_path = assignment_scheduler.getAssignmentResults()
 
             print("- Supervisor giving the Logger/Cataloguer the results\n")
             lc_box = Loggers.textLoggerCatalogur(resultsModel)
+
             csv_path = lc_box.createCSV(container_path)
             analytics_path = lc_box.createAnalytics(container_path)
-
-            # true is for if it should zip it up after creation of the directory.
-            recipts_dir_path = lc_box.createTxtReceipts(container_path, true)
+            #zip_recipts_dir_path = lc_box.zipTxtReceipts(recipts_dir_path)
 
             print("- Supervisor has placed the following files in the mentioned path:\n")
             print("\t- \"{}\"'s CSV file: \"{}\"\n".format(assignment.name, csv_path))
