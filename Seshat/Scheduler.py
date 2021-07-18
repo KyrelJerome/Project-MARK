@@ -31,6 +31,10 @@ class Scheduler:
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
 
+        student_marks_dir = self.base_dir + "/../student_marks"
+        os.mkdir(student_marks_dir)
+
+
         for student in self.utorids:
 
             # create env - making exclusive starter code.
@@ -58,27 +62,42 @@ class Scheduler:
 
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
-                    results_object.set_name("Output of \"" + test.marking_command + "\"")
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
 
                     self.student_marks.add_result(results_object)
 
+
                 except Exception as e:
-                    message = "- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e)
+                    output = "- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e)
 
                     results_object = ResultModel()
-                    results_object.set_name("Output of \"" + test.marking_command + "\"")
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(message)
                     results_object.set_question_worth(test.worth)
 
                     self.student_marks.add_result(results_object)
-                    print(message)
+                    print(output)
+
+
+            receipt_body = self.assignment_name + " - " + student + "Marking Receipt.\n"
+            final_mark = 0
+            for resmod in self.student_marks:
+                receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
+                final_mark += resmod.get_question_mark() * resmod.get_question_worth()
+
+            receipt_body += "\n\nTotal Assignment Mark: " + final_mark
+
+            # Constructing the Unique File name
+            fn1 = re.sub("UTORID", student, self.file_name_pattern)
+            fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
+            file_name = student_marks_dir + "/" + fn2 + ".txt"
 
 
             # Creating the Receipt
-            f = open( 'file.py', 'w' )
-            f.write( 'blah blah' )
+            f = open( file_name , 'w' )
+            f.write( receipt_body )
             f.close()
 
 
