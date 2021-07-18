@@ -13,20 +13,17 @@ assignments:
           filename # i.e. UTORID-CSC148-Assignment#-Result.txt
       injection_locations:  # relative to where it would be in the starter code
           - /submission1.txt
-      tests:
-          - name:
-                test_suite_1
-            prep_commands:
-                - command 1
-                - command 2
-                - command 3
-            marking_commands: # things under here needs to be fixed.
-                - command: python3 autograder1.py arg1 arg2
-                  timeout: 40 # if not needed, set as -1
-                  worth: 0.2  # needs to be between 0 and 1
-                - command: python3 autograder2.py arg1 arg2
-                  timeout: 60 # if not needed, set as -1
-                  worth: 0.8   # needs to be between 0 and 1
+
+      tests: # things under here needs to be fixed.
+          - prep_command: command 1
+            marking_command: echo "python3 autograder1.py arg1 arg2"
+            timeout: 40 # if not needed, set as -1
+            worth: 0.2  # needs to be between 0 and 1
+          - prep_command: command 2
+            marking_command: python3 autograder2.py arg1 arg2
+            timeout: 60 # if not needed, set as -1
+            worth: 0.8   # needs to be between 0 and 1
+
       total_worth:
           val_here
       creates_analytics_file:
