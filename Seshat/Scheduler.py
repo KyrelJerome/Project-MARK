@@ -1,4 +1,5 @@
 import Common
+import Adapters
 import os
 import shutil
 import re
@@ -22,7 +23,8 @@ class Scheduler:
         self.tests = assignmentModel.tests
 
         self.file_name_pattern = assignmentModel.file_name_pattern
-        self.overall_result = None
+
+        self.student_marks = [] # a list full of ResultModels
 
     def markAll(self):
 
@@ -45,6 +47,7 @@ class Scheduler:
                 location_to = student_container + os.path.dirname(injections)
                 shutil.copy(location_from, location_to)
 
+            test_results = []
 
             # run the tests
             for test in self.tests:
@@ -55,23 +58,34 @@ class Scheduler:
                 signal.signal(signal.SIGALRM, signal_handler)
                 signal.alarm(60)
                 try:
-                    output = subprocess.check_output(test.marking_command, shell=True) 
-                    print(output)
+                    output = subprocess.check_output(test.marking_command, shell=True)
+
+                    my_adapter = Adapters.BaseAdapter()
+                    results_object = my_adapter.parseOutput(output)
+
+                    test_results.append(results_object)
+
+                    # TODO: create a Receipt and inject output into it
+                    # make sure to follow the convention mentioned in the
+                    # config file.
+
                 except Exception as e:
                     print("- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e))
 
-                # add up all the marking commands output and return the test mark
-                # TODO: Regex the total mark.
-                pattern = "Total Mark"
+
+            # TODO: Add up the results of all ResultModels (in test_results)
+            # and create a *Super* ResultModel object that contains the final
+            # mark of this student given ALL tests
 
 
-                # TODO: Add it up to the test_mark_counter.
+            # Assuming this is the variable that holds the student final result
+            student_mark = #EXAMPLEOBJECT
 
 
+            self.student_marks.append(student_mark)
 
 
-            # record specific results and add into the result model
-            # TODO
+    def getAssignmentResults():
+        # Is this a good idea? I'm returning a list full of ResultModels as the first thing
 
-        # make overall results model
-        # TODO
+        return self.student_marks,
