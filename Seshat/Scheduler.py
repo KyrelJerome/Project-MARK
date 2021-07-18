@@ -1,3 +1,4 @@
+from Common.ResultsModel import ResultsModel
 import Common
 import Adapters
 import os
@@ -26,29 +27,28 @@ class Scheduler:
 
         self.student_marks = [] # a list full of ResultModels
 
-    def markAll(self):
+    def markAll(self): #-> List(Tuple(ResultModel, string))
 
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
 
-        for student in self.utorids:
+        for student_utorid in self.utorids:
 
             # what if student is like .DS_store or a python cache file?
             # TODO
 
             # create env - making exclusive starter code.
-            student_container = self.base_dir + "/" + student
+            student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
 
             # move submissions into the said env
             for injections in self.injection_locations:
                 submission_location = os.path.basename(injections)
-                location_from = self.student_submission_directory + "/" + student + "/" + submission_location
+                location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
                 shutil.copy(location_from, location_to)
 
-            test_results = []
-
+            final_results = ResultsModel()
             # run the tests
             for test in self.tests:
                 # running the prep commands
@@ -60,10 +60,10 @@ class Scheduler:
                 try:
                     output = subprocess.check_output(test.marking_command, shell=True)
 
-                    my_adapter = Adapters.BaseAdapter()
+                    my_adapter = Adapters.BaseAdapter()# Factory here instead
                     results_object = my_adapter.parseOutput(output)
 
-                    test_results.append(results_object)
+                    final_results.add_result(results_object)
 
                     # TODO: create a Receipt and inject output into it
                     # make sure to follow the convention mentioned in the
@@ -72,18 +72,12 @@ class Scheduler:
                 except Exception as e:
                     print("- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e))
 
-
             # TODO: Add up the results of all ResultModels (in test_results)
             # and create a *Super* ResultModel object that contains the final
             # mark of this student given ALL tests
 
-
             # Assuming this is the variable that holds the student final result
-            student_mark = #EXAMPLEOBJECT
-
-
-            self.student_marks.append(student_mark)
-
+            self.student_marks.append((final_results,student_utorid))
 
     def getAssignmentResults():
         # Is this a good idea? I'm returning a list full of ResultModels as the first thing
