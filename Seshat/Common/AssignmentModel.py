@@ -11,7 +11,6 @@ class AssignmentModel:
         # what if these don't exist? or are not the files that are actually in the submissions folder?
         self.injection_locations = assignment_config["injection_locations"]
 
-
         # What if this directory doesn't exist?
         self.starter_code_directory = assignment_config["starter_code_directory"]
 
