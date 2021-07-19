@@ -24,7 +24,7 @@ class ResultsModel:
     def add_result(self, child_result) -> None:
         """
         If this is empty, it is assumed that this ResultsModel 'node' doesn't have any children.
-        The arguemnt child_result is another ResultsModel
+        The argument child_result is another ResultsModel
         """
         self.child_questions.append(child_result)
 
@@ -37,16 +37,16 @@ class ResultsModel:
     def get_question_notes(self) -> list:
         return self.question_notes
 
-    def set_question_mark(self, mark) -> None:
+    def set_question_mark(self, mark: float) -> None:
         self.question_mark = mark
 
-    def get_question_mark(self) -> int:
+    def get_question_mark(self) -> float:
         return self.question_mark
 
-    def set_question_worth(self, worth: int) -> None:
+    def set_question_worth(self, worth: float) -> None:
         self.question_worth = worth
 
-    def get_question_worth(self) -> int:
+    def get_question_worth(self) -> float:
         return self.question_worth
 
     def set_question_name(self, name: str) -> None:
