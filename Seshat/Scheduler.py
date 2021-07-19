@@ -24,27 +24,26 @@ class Scheduler:
 
         self.file_name_pattern = assignmentModel.file_name_pattern
 
-        self.student_marks = ResultModel() # a list full of ResultModels
+        self.student_marks_dir = self.base_dir + "/../student_marks"
+        self.student_marks = Common.ResultsModel() # a list full of ResultModels
 
     def markAll(self):
 
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
 
-        student_marks_dir = self.base_dir + "/../student_marks"
-        os.mkdir(student_marks_dir)
+        os.mkdir(self.student_marks_dir)
 
-
-        for student in self.utorids:
+        for student_utorid in self.utorids:
 
             # create env - making exclusive starter code.
-            student_container = self.base_dir + "/" + student
+            student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
 
             # move submissions into the said env
             for injections in self.injection_locations:
                 submission_location = os.path.basename(injections)
-                location_from = self.student_submission_directory + "/" + student + "/" + submission_location
+                location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
                 shutil.copy(location_from, location_to)
 
@@ -72,7 +71,7 @@ class Scheduler:
                 except Exception as e:
                     output = "- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e)
 
-                    results_object = ResultModel()
+                    results_object = Common.ResultsModel()
                     results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(message)
                     results_object.set_question_worth(test.worth)
@@ -81,7 +80,7 @@ class Scheduler:
                     print(output)
 
 
-            receipt_body = self.assignment_name + " - " + student + "Marking Receipt.\n"
+            receipt_body = self.assignment_name + " - " + student_utorid + "Marking Receipt.\n"
             final_mark = 0
             for resmod in self.student_marks:
                 receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
@@ -90,7 +89,7 @@ class Scheduler:
             receipt_body += "\n\nTotal Assignment Mark: " + final_mark
 
             # Constructing the Unique File name
-            fn1 = re.sub("UTORID", student, self.file_name_pattern)
+            fn1 = re.sub("UTORID", student_utorid, self.file_name_pattern)
             fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
             file_name = student_marks_dir + "/" + fn2 + ".txt"
 
@@ -102,6 +101,4 @@ class Scheduler:
 
 
     def getAssignmentResults():
-        # Is this a good idea? I'm returning a list full of ResultModels as the first thing
-
-        return self.student_marks,
+        return self.student_marks, self.student_marks_dir
