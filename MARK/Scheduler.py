@@ -19,35 +19,34 @@ class Scheduler:
         self.student_submission_directory = assignmentModel.student_submission_directory
         self.starter_code_directory = assignmentModel.starter_code_directory
 
-        self.utorids = os.listdir(self.student_submission_directory)
+        self.utorids = os.listdir(self.student_submission_directory)    # TODO: This feels like a bad idea...
         self.tests = assignmentModel.tests
 
         self.file_name_pattern = assignmentModel.file_name_pattern
 
-        self.student_marks = [] # a list full of ResultModels
+        self.student_marks_dir = self.base_dir + "/../student_marks"
+        self.student_marks = Common.ResultsModel() # a list full of ResultModels
 
     def markAll(self):
 
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
 
-        for student in self.utorids:
+        os.mkdir(self.student_marks_dir)
 
-            # what if student is like .DS_store or a python cache file?
-            # TODO
+        for student_utorid in self.utorids:
 
             # create env - making exclusive starter code.
-            student_container = self.base_dir + "/" + student
+            student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
 
             # move submissions into the said env
             for injections in self.injection_locations:
                 submission_location = os.path.basename(injections)
-                location_from = self.student_submission_directory + "/" + student + "/" + submission_location
+                location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
                 shutil.copy(location_from, location_to)
 
-            test_results = []
 
             # run the tests
             for test in self.tests:
@@ -56,36 +55,50 @@ class Scheduler:
 
                 # running the marking commands
                 signal.signal(signal.SIGALRM, signal_handler)
-                signal.alarm(60)
+                signal.alarm(test.timeout)
                 try:
                     output = subprocess.check_output(test.marking_command, shell=True)
 
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
+                    results_object.add_note(output)
+                    results_object.set_question_worth(test.worth)
 
-                    test_results.append(results_object)
+                    self.student_marks.add_result(results_object)
 
-                    # TODO: create a Receipt and inject output into it
-                    # make sure to follow the convention mentioned in the
-                    # config file.
 
                 except Exception as e:
-                    print("- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e))
+                    output = "- The Marking Command \"" + test.marking_command + "\" failed: [" + e + "{}]"
+
+                    results_object = Common.ResultsModel()
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
+                    results_object.add_note(message)
+                    results_object.set_question_worth(test.worth)
+
+                    self.student_marks.add_result(results_object)
+                    print(output)
 
 
-            # TODO: Add up the results of all ResultModels (in test_results)
-            # and create a *Super* ResultModel object that contains the final
-            # mark of this student given ALL tests
+            receipt_body = self.assignment_name + " - " + student_utorid + "Marking Receipt.\n"
+            final_mark = 0
+            for resmod in self.student_marks:
+                receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
+                final_mark += resmod.get_question_mark() * resmod.get_question_worth()
+
+            receipt_body += "\n\nTotal Assignment Mark: " + final_mark
+
+            # Constructing the Unique File name
+            fn1 = re.sub("UTORID", student_utorid, self.file_name_pattern)
+            fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
+            file_name = student_marks_dir + "/" + fn2 + ".txt"
 
 
-            # Assuming this is the variable that holds the student final result
-            student_mark = #EXAMPLEOBJECT
-
-
-            self.student_marks.append(student_mark)
+            # Creating the Receipt
+            f = open( file_name , 'w' )
+            f.write( receipt_body )
+            f.close()
 
 
     def getAssignmentResults():
-        # Is this a good idea? I'm returning a list full of ResultModels as the first thing
-
-        return self.student_marks,
+        return self.student_marks, self.student_marks_dir
