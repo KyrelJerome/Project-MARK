@@ -25,7 +25,7 @@ class Scheduler:
         self.file_name_pattern = assignmentModel.file_name_pattern
 
         self.student_marks_dir = self.base_dir + "/../student_marks"
-        self.student_marks = Common.ResultsModel() # a list full of ResultModels
+        self.student_marks = Common.ResultsModel.ResultsModel() # a list full of ResultModels
 
     def markAll(self):
 
@@ -69,11 +69,11 @@ class Scheduler:
 
 
                 except Exception as e:
-                    output = "- The Marking Command \"" + test.marking_command + "\" failed: [" + e + "{}]"
+                    output = "- The Marking Command \"" + str(test.marking_command) + "\" failed: [" + str(e) + "{}]"
 
-                    results_object = Common.ResultsModel()
+                    results_object = Common.ResultsModel.ResultsModel()
                     results_object.set_question_name("Output of \"" + test.marking_command + "\"")
-                    results_object.add_note(message)
+                    results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
 
                     self.student_marks.add_result(results_object)
@@ -82,16 +82,16 @@ class Scheduler:
 
             receipt_body = self.assignment_name + " - " + student_utorid + "Marking Receipt.\n"
             final_mark = 0
-            for resmod in self.student_marks:
+            for resmod in self.student_marks.child_questions:
                 receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
                 final_mark += resmod.get_question_mark() * resmod.get_question_worth()
 
-            receipt_body += "\n\nTotal Assignment Mark: " + final_mark
+            receipt_body += "\n\nTotal Assignment Mark: " + str(final_mark)
 
             # Constructing the Unique File name
             fn1 = re.sub("UTORID", student_utorid, self.file_name_pattern)
             fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
-            file_name = student_marks_dir + "/" + fn2 + ".txt"
+            file_name = student_container + "/" + fn2 + ".txt"
 
 
             # Creating the Receipt
@@ -100,5 +100,5 @@ class Scheduler:
             f.close()
 
 
-    def getAssignmentResults():
+    def getAssignmentResults(self):
         return self.student_marks, self.student_marks_dir
