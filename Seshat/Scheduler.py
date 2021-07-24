@@ -69,7 +69,7 @@ class Scheduler:
 
 
                 except Exception as e:
-                    output = "- The Marking Command \"{}\" failed: [{}]".format(test.marking_command, e)
+                    output = "- The Marking Command \"" + test.marking_command + "\" failed: [" + e + "{}]"
 
                     results_object = Common.ResultsModel()
                     results_object.set_question_name("Output of \"" + test.marking_command + "\"")
