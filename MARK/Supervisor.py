@@ -2,7 +2,7 @@ from Scheduler import Scheduler
 import Common
 import os
 import shutil
-
+import Logger
 '''
     Carries the task of building an environment for use when marking.
     Creates the folder structures required for consistent and safe marking.
@@ -24,30 +24,27 @@ class Supervisor:
             container_path = path + assignment.name + "-marking-container"
             os.mkdir(container_path)
 
-            # ==================================================================
+            # Handling the Scheduler
             assignment_scheduler = Scheduler(container_path, assignment)
-
             print("- Starting marking sequence.\n")
             assignment_scheduler.markAll()
-
             print("- Supervisor receiving results from the Scheduler.\n")
-            resultsModel, recipts_dir_path = assignment_scheduler.getAssignmentResults()
+            resultsList, recipts_dir_path = assignment_scheduler.getAssignmentResults()
 
-            # ==================================================================
-
+            # Handling Logger and Cataloguer
             print("- Supervisor giving the Logger/Cataloguer the results\n")
-            lc_box = Loggers.textLoggerCatalogur(resultsModel)
+            lc_object = Logger.Logger(resultsList)
+            lc_object.createCSV(container_path, assignment.name)
+            lc_object.createAnalytics(container_path, assignment.name, True) # Third Parameter is the visualizer
 
-            # parameter tells the method where to save the CSV and with what name, it also retuns the path of the said csv
-            csv_path = lc_box.createCSV(container_path, assignment.name)
-            # parameter tells the method where to save the analytics and with what name, it also retuns the path of the said analytics
-            analytics_path = lc_box.createAnalytics(container_path, assignment.name)
+            # PROTOTYPE: I was thinking about how it basically grabs the student marks folder that has all the receipts, grabs the csv and the anayltics and the html visualizer file, puts them in one dir and then zips them up ready to go.
+            # lc_object.giftWrap(recipts_dir_path)
 
 
-            print("- Supervisor has placed the following files in the mentioned path:\n")
-            print("\t- \"{}\"'s CSV file: \"{}\"\n".format(assignment.name, csv_path))
-            print("\t- \"{}\"'s Analytics file: \"{}\"\n".format(assignment.name, analytics_path))
-            print("\t- \"{}\"'s Receipt directory: \"{}\"\n".format(assignment.name, recipts_dir_path))
+            print("- Supervisor has placed the following files in \""+ container_path +"\":\n")
+            print("\t- \"{}\"'s CSV file\n".format(assignment.name))
+            print("\t- \"{}\"'s Analytics file\n".format(assignment.name))
+            print("\t- \"{}\"'s Receipt directory\n".format(assignment.name))
 
         if self.does_clean_flag:
             print("- \"does_clean_flag\" registered, initiating the cleaning protocol.")
