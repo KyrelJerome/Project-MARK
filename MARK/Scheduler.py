@@ -4,6 +4,7 @@ import os
 import shutil
 import re
 import signal
+import Util
 
 '''
     Schedules grading for a specific assignment.
@@ -28,6 +29,8 @@ class Scheduler:
         self.student_marks = [] # a list full of student_models
 
     def markAll(self):
+
+        swissArmyKnife = Util()
 
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
@@ -65,7 +68,9 @@ class Scheduler:
                     # Adaptor
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
+                    results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
+
                     student_model.add_result(results_object)
 
 
@@ -74,9 +79,14 @@ class Scheduler:
                     print(output)
 
                     results_object = Common.ResultsModel.ResultsModel()
+                    results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
+
                     student_model.add_result(results_object)
 
+
+            # Calculates the Final Mark of the Student
+            swissArmyKnife.crunchTheNumbers(student_model)
 
             # Adding student results to self.student_marks
             self.student_marks.append(student_model)
@@ -89,23 +99,22 @@ class Scheduler:
 
     def createStudentReceipt(self, sm_object, container_location):
 
-            # Creating The Receipt Body
-            receipt_body = self.assignment_name + " - " + sm_object.get_utorid() + "Marking Receipt.\n"
-            final_mark = 0
-            for resmod in sm_object.get_children():
-                receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
-                final_mark += resmod.get_question_mark() * resmod.get_question_worth()
-            receipt_body += "\n\nTotal Assignment Mark: " + str(final_mark)
+        # Creating The Receipt Body
+        receipt_body = self.assignment_name + " - \"" + sm_object.get_utorid() + "\" Marking Receipt.\n"
+        for resmod in sm_object.get_children():
+            receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
 
-            # Constructing the Unique File name
-            fn1 = re.sub("UTORID", sm_object.get_utorid(), self.file_name_pattern)
-            fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
-            file_name = container_location + "/" + fn2 + ".txt"
+        receipt_body += "\n\nTotal Assignment Mark: " + str(sm_object.get_final_mark())
 
-            # Creating the Receipt
-            f = open( file_name , 'w' )
-            f.write( receipt_body )
-            f.close()
+        # Constructing the Unique File name
+        fn1 = re.sub("UTORID", sm_object.get_utorid(), self.file_name_pattern)
+        fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
+        file_name = container_location + "/" + fn2 + ".txt"
+
+        # Creating the Receipt
+        f = open( file_name , 'w' )
+        f.write( receipt_body )
+        f.close()
 
 
     def getAssignmentResults(self):
