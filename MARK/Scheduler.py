@@ -68,6 +68,7 @@ class Scheduler:
                     # Adaptor
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
 
@@ -79,6 +80,7 @@ class Scheduler:
                     print(output)
 
                     results_object = Common.ResultsModel.ResultsModel()
+                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
 
