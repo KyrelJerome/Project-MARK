@@ -25,7 +25,7 @@ class Scheduler:
         self.file_name_pattern = assignmentModel.file_name_pattern
 
         self.student_marks_dir = self.base_dir + "/../student_marks"
-        self.student_marks = [] # a list full of Tuples(utorid, result_model)
+        self.student_marks = [] # a list full of student_models
 
     def markAll(self):
 
@@ -47,8 +47,9 @@ class Scheduler:
                 location_to = student_container + os.path.dirname(injections)
                 shutil.copy(location_from, location_to)
 
-            # Creating Student Mark Object
-            student_model = Common.ResultsModel.ResultsModel()
+            # Creating Student Mark Model
+            student_model = Common.StudentModel.StudentModel()
+            student_model.setUtorid(student_utorid) # TODO: setUtorid inside student_model
 
             # run the tests
             for test in self.tests:
@@ -64,37 +65,32 @@ class Scheduler:
                     # Adaptor
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
-                    # results_object.set_question_name("Output of \"" + test.marking_command + "\"")
-                    # results_object.add_note(output)
                     results_object.set_question_worth(test.worth)
-
-                    student_model.add_result(results_object)
+                    student_model.add_result(results_object) # TODO: add_result inside student_model
 
 
                 except Exception as e:
                     output = "- The Marking Command \"" + str(test.marking_command) + "\" failed: [" + str(e) + "]"
-
-                    results_object = Common.ResultsModel.ResultsModel()
-                    results_object.set_question_name("Output of \"" + test.marking_command + "\"")
-                    results_object.add_note(output)
-                    results_object.set_question_worth(test.worth)
-
-                    student_model.add_result(results_object)
                     print(output)
 
+                    results_object = Common.ResultsModel.ResultsModel()
+                    results_object.set_question_worth(test.worth)
+                    student_model.add_result(results_object) # TODO: add_result inside student_model
+
+
             # Adding student results to self.student_marks
-            self.student_marks.append((student_utorid, student_model))
+            self.student_marks.append(student_model)
 
             # Creating The Receipt
-            self.createStudentReceipt(self, student_utorid, student_model, student_container)
+            self.createStudentReceipt(self, student_model, student_container)
 
 
 
 
-    def createStudentReceipt(self, utorid, sm_object, container_location):
+    def createStudentReceipt(self, sm_object, container_location):
 
             # Creating The Receipt Body
-            receipt_body = self.assignment_name + " - " + utorid + "Marking Receipt.\n"
+            receipt_body = self.assignment_name + " - " + sm_object.getUtorid() + "Marking Receipt.\n" # TODO: getUtorid inside student_model
             final_mark = 0
             for resmod in sm_object.get_children():
                 receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
@@ -102,7 +98,7 @@ class Scheduler:
             receipt_body += "\n\nTotal Assignment Mark: " + str(final_mark)
 
             # Constructing the Unique File name
-            fn1 = re.sub("UTORID", utorid, self.file_name_pattern)
+            fn1 = re.sub("UTORID", sm_object.getUtorid(), self.file_name_pattern) # TODO: getUtorid inside student_model
             fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
             file_name = container_location + "/" + fn2 + ".txt"
 
