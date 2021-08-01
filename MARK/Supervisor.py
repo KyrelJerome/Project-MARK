@@ -21,19 +21,22 @@ class Supervisor:
 
             print("- Creating container for \"{}\".\n".format(assignment.name))
 
+            # Creating Base Container
             container_path = path + assignment.name + "-marking-container"
             os.mkdir(container_path)
 
             # Handling the Scheduler
             assignment_scheduler = Scheduler(container_path, assignment)
+
             print("- Starting marking sequence.\n")
             assignment_scheduler.markAll()
+
             print("- Supervisor receiving results from the Scheduler.\n")
             resultsList, recipts_dir_path = assignment_scheduler.getAssignmentResults()
 
             # Handling Logger and Cataloguer
             print("- Supervisor giving the Logger/Cataloguer the results\n")
-            lc_object = Logger.Logger(resultsList)
+            lc_object = Logger.Logger(resultsList)  #resultsList is a list filled with StudentModel elements
             lc_object.createCSV(container_path, assignment.name)
             lc_object.createAnalytics(container_path, assignment.name, True) # Third Parameter is the visualizer
 
