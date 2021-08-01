@@ -49,7 +49,7 @@ class Scheduler:
 
             # Creating Student Mark Model
             student_model = Common.StudentModel.StudentModel()
-            student_model.setUtorid(student_utorid) # TODO: setUtorid inside student_model
+            student_model.set_utorid(student_utorid)
 
             # run the tests
             for test in self.tests:
@@ -66,7 +66,7 @@ class Scheduler:
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
                     results_object.set_question_worth(test.worth)
-                    student_model.add_result(results_object) # TODO: add_result inside student_model
+                    student_model.add_result(results_object)
 
 
                 except Exception as e:
@@ -75,7 +75,7 @@ class Scheduler:
 
                     results_object = Common.ResultsModel.ResultsModel()
                     results_object.set_question_worth(test.worth)
-                    student_model.add_result(results_object) # TODO: add_result inside student_model
+                    student_model.add_result(results_object)
 
 
             # Adding student results to self.student_marks
@@ -90,7 +90,7 @@ class Scheduler:
     def createStudentReceipt(self, sm_object, container_location):
 
             # Creating The Receipt Body
-            receipt_body = self.assignment_name + " - " + sm_object.getUtorid() + "Marking Receipt.\n" # TODO: getUtorid inside student_model
+            receipt_body = self.assignment_name + " - " + sm_object.get_utorid() + "Marking Receipt.\n"
             final_mark = 0
             for resmod in sm_object.get_children():
                 receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
@@ -98,7 +98,7 @@ class Scheduler:
             receipt_body += "\n\nTotal Assignment Mark: " + str(final_mark)
 
             # Constructing the Unique File name
-            fn1 = re.sub("UTORID", sm_object.getUtorid(), self.file_name_pattern) # TODO: getUtorid inside student_model
+            fn1 = re.sub("UTORID", sm_object.get_utorid(), self.file_name_pattern)
             fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
             file_name = container_location + "/" + fn2 + ".txt"
 
