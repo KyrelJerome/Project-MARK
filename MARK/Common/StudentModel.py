@@ -21,10 +21,6 @@ def __init__(self):
 
 
 def add_result(self, child_result: ResultsModel) -> None:
-    """
-    If this is empty, it is assumed that this ResultsModel 'node' doesn't have any children.
-    The argument child_result is another ResultsModel
-    """
     self.sub_results.append(child_result)
 
 def get_results(self) -> list:
@@ -37,7 +33,6 @@ def get_final_mark(self) -> float:
     return self.final_mark
 
 def set_utorid(self, name: str) -> None:
-    """Question name is not required, without it, questions will be numbered."""
     self.utorid = name
 
 def get_utorid(self) -> str:
