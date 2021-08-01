@@ -10,9 +10,9 @@ class BaseAdapter:
         results = ResultsModel()
         total_grade_pattern = r"Total Grade:\s*\[(\d*)\/(\d*)\]"
         res = re.search(total_grade_pattern, output)
-        numerator = int(res.group(1))
-        denominator = int(res.group(2))
-        results.set_question_mark(numerator)
-        results.set_question_worth(denominator)
+        numerator = float(res.group(1))
+        denominator = float(res.group(2))
+        results.set_question_mark(numerator/denominator)
+        
 
         return results

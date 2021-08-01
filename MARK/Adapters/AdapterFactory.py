@@ -1,7 +1,3 @@
-
-from Adapters import JSON_ADAPTER_ID
-
-import AdaptersConsts
 class AdapterFactory:
 
     @staticmethod

@@ -10,7 +10,7 @@ assignments:
       starter_code_directory:
           ./starter_code
       file_name_pattern:
-          filename # i.e. UTORID-CSC148-Assignment#-Result.txt
+          filename # i.e. UTORID-CSC148-ASSIGNMENT#-Result.txt # It is crucial for UTORID and ASSIGNMENT# to be there since they get parsed.
       injection_locations:  # relative to where it would be in the starter code
           - /submission1.txt
 
