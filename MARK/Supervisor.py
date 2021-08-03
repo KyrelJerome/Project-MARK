@@ -41,7 +41,7 @@ class Supervisor:
             lc_object.createAnalytics(container_path, assignment.name, True) # Third Parameter is the visualizer
 
             # PROTOTYPE: I was thinking about how it basically grabs the student marks folder that has all the receipts, grabs the csv and the anayltics and the html visualizer file, puts them in one dir and then zips them up ready to go.
-            lc_object.giftWrap(recipts_dir_path)
+            # lc_object.giftWrap(recipts_dir_path)
 
 
             print("- Supervisor has placed the following files in \""+ container_path +"\":\n")
