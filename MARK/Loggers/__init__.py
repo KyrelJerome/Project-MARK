@@ -1,3 +1,0 @@
-from Seshat.Loggers.SparseYamlLogger import SparseYamlLogger
-import BaseLogger
-import SparseYamlLogger
