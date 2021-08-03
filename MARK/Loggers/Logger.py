@@ -5,6 +5,8 @@ from typing import Any, Dict
 import matplotlib.pyplot as plt
 import statistics
 from zipfile import ZipFile
+import os
+import glob
 
 
 class Logger:
@@ -98,16 +100,16 @@ class Logger:
         # Mode of Final Marks
         self.analyticsModel[total_mode] = statistics.mode(all_finals)
 
-        # How many students got perfect?
+        # Number of students with perfect score
         self.analyticsModel[num_perfects] = perfects
 
-        # How many students failed?
+        # Number of students who failed
         self.analyticsModel[num_failures] = failures
 
-        # How many students passed?
+        # Number of students who passed
         self.analyticsModel[num_passes] = passes
 
-        # How many 0s?
+        # Number of students receiving grade of zero
         self.analyticsModel[num_zeroes] = zeroes
 
         # If we can add a self.number_of_questions attribute to StudentModel, that would be better.
@@ -131,15 +133,18 @@ class Logger:
         self.analyticsModel[mean_per_question] = question_averages
 
         if visuals:
-            createAnalyticsVisual()
+            createAnalyticsVisual(assignment_name, container_path)
 
-    def createAnalyticsVisual(self):
+    def createAnalyticsVisual(self, assignment_name: str, container_path: str):
         # Will execute based on a flag value in config (perhaps).
         # Update: will be HTML file by default.
         # IGNORE, it's a helper for another function. DO NOT CALL FROM MAIN.
 
         if self.analyticsModel == {}:
+            print("Analytics Model has not been generated.")
             return None
+
+        visuals_folderpath = container_path+"/AnalyticModelVisuals"
 
         # Generate normal distribution graph of marks
 
@@ -155,10 +160,11 @@ class Logger:
 
         ylabels = self.analyticsModel[mean_per_question].values()
         fig_means_per_question.bar(xlabels, ylabels)
-        plt.show()
+        fig_means_per_question.savefig(
+            visuals_folderpath+"Mean_per_Question.png")
 
         # Display Mean, Median and Mode
-        # number of students vs their final marks + mean median and mode
+        # number of students vs their final marks + mean median and mode using generated CSV file
 
         #final_marks_fig = plt.figure()
         #ax = final_marks_fig.add_subplot(1, 1, 1)
@@ -173,21 +179,39 @@ class Logger:
         counts = [self.analyticsModel[num_passes], self.analyticsModel[num_failures],
                   self.analyticsModel[num_perfects], self.analyticsModel[num_zeroes]]
         fig_pie(counts, labels=descriptors, autopct='%1.2f%%')
-        plt.show()
+        fig_means_per_question.savefig(
+            visuals_folderpath+"Proportions_Pie_Chart.png")
+
+        visual_file = container_path+"/"+"Visual_Analytics_"+assignment_name+".html"
+
+        # write all images to HTML file --> may need to import glob here
+        html = ""
+        for file in glob.glob("*.png"):  # DOUBLE CHECK EXT
+            html += f"<img src='{file}'/><br>"
+
+        with open(visual_file, 'w'):
+            outputfile.write(html)
+
+        os.startfile(visual_file)
 
     def get_analayticsModel(self) -> Dict:
+        "Will return empty dictionary if analyticsModel has not been created"
         return self.analyticsModel
 
     def get_csv_pathway(self) -> str:
+        """
+        Will return None if csv has not been written.
+        """
         return self.csv_pathway
 
-    def giftwrap(self, receipt_pathway: str, gift_pathway: str):
+    def giftwrap(self, receipt_pathway: str):
         """
         Call for CSV file, Analytics File, and Receipts and exports all in one zip folder, exported to gift_dir pathway.
         """
-        gift = []
-        # call CSVfile
-        # call Analytics File
+        #gift = []
+        #csv = get_csv_pathway()
+        #analytics = get_analyticsModel()
+
         # receipts
 
         # export_to(gift_pathway)
