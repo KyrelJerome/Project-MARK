@@ -1,14 +1,28 @@
 import csv
 import zipfile
 import numpy as np
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
 from typing import Any, Dict
+=======
+from typing import Any, Dict, List
+import matplotlib
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
 import matplotlib.pyplot as plt
 import statistics
 from zipfile import ZipFile
 import os
 import glob
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
 import pandas as pd
 from pandas.core.algorithms import mode
+=======
+import subprocess
+import sys
+
+
+# import pandas as pd
+# from pandas.core.algorithms import mode
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
 
 
 class Logger:
@@ -128,7 +142,12 @@ class Logger:
                 index += 1
 
         for i in range(num_questions):
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
             question_averages["Q"+(i+1)] = statistics.mean(question_marks[i])
+=======
+            question_averages["Q" +
+                              str(i+1)] = statistics.mean(question_marks[i])
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
 
         # Mean per question
         self.analyticsModel[mean_per_question] = question_averages
@@ -177,8 +196,14 @@ class Logger:
             label = "Q"+i
             xlabels.append(label)
 
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
         ylabels = self.analyticsModel[mean_per_question].values()
         fig_1.bar(xlabels, ylabels)
+=======
+        ylabels = self.analyticsModel["mean_per_question"].values()
+        ax.bar(xlabels, ylabels)
+        fig_1.show()
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
         fig_1.savefig(
             visuals_folderpath+"Mean_per_Question.png")
 
@@ -187,6 +212,7 @@ class Logger:
         for student in self.StudentModels:
             final_marks.append(student.get_final_mark())
 
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
         fig_2 = plt.figure()
         final_marks.plot(kind='hist', color='whitesmoke', edgecolor='gray')
         fig_2.xlabel('Total Marks', labelpad=15)
@@ -204,15 +230,35 @@ class Logger:
         fig_2.legend()
 
         fig_2.savefig(visuals_folderpath+"Mean_per_Question.png")
+=======
+        final_marks.plot(kind='hist', color='whitesmoke', edgecolor='grey')
+        plt.xlabel("Final Mark")
+        plt.ylabel("Frequency")
+        plt.title("Distribution of Final Marks for "+assignment_name)
+
+        for measurement, name, color in zip(measurements, names, colors):
+            plt.axvline(x=measurement, linestyle='--',
+                        label='{0} at {1]'.format(name, measurement), c=color)
+        plt.legend()
+        plt.show()
+        plt.savefig(visuals_folderpath+"Mean_per_Question.png")
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
 
         # Generate Figure 3
         fig_3 = plt.figure()
         fig_3.add_axes([0, 0, 1, 1])
         fig_3.axis('equal')
         descriptors = ["Passed", "Failed", "Perfect Score", "Zero Grade"]
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
         counts = [self.analyticsModel[num_passes], self.analyticsModel[num_failures],
                   self.analyticsModel[num_perfects], self.analyticsModel[num_zeroes]]
         fig_3(counts, labels=descriptors, autopct='%1.2f%%')
+=======
+        counts = [self.analyticsModel["num_passes"], self.analyticsModel["num_failures"],
+                  self.analyticsModel["num_perfects"], self.analyticsModel["num_zeroes"]]
+        ax.pie(counts, labels=descriptors, autopct='%1.2f%%')
+        fig_3.show()
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
         fig_3.savefig(
             visuals_folderpath+"Proportions_Pie_Chart.png")
 
@@ -227,7 +273,15 @@ class Logger:
             outputfile.write(html)
 
         # Automatically open HTML file to view
+<<<<<<< Updated upstream:MARK/Loggers/Logger.py
         os.startfile(visual_file)
+=======
+
+        # TO DO: automatic opening of HTML file for all os system.
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, visual_file])
+        # os.startfile(visual_file)
+>>>>>>> Stashed changes:MARK/Logger/Logger.py
 
     def get_analayticsModel(self) -> Dict:
         """
@@ -245,7 +299,6 @@ class Logger:
         """
         Export CSVfile, Analytics Model and marking Receipts all in one zip folder to current directory by default.
         """
-
         pass
 
     def export_to(self, zip_name: str, objects: List[Any], pathway: str):
