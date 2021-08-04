@@ -1,3 +1,5 @@
+numpy==1.21.1
+pygame==2.0.1
+matplotlib==3.4.2
+pytest==6.2.4
 PyYAML==5.4.1
-Seshat==0.3.1
-xmpppy==0.6.2
