@@ -34,9 +34,12 @@ class AssignmentModel:
         for test_config in assignment_config["tests"]:
             self.tests.append(Common.TestModel(test_config))
 
+        valid_student_sub_dir = FileUtility.doesFileExist(self.student_submission_directory)
+        valid_injection_path = FileUtility.doesPathExist(self.injection_locations)
+        valid_starter_code_dir = FileUtility.doesPathExist(self.starter_code_directory)
         # Check if required files exist
-        if FileUtility.doesFileExist(self.student_submission_directory) or FileUtility.doesPathExist(self.injection_locations):
-            raise FileNotFoundError("Invalid file path within configuration")
+        if not valid_student_sub_dir or not valid_starter_code_dir or not valid_injection_path:
+            raise FileNotFoundError("Invalid file path within configuration.")
 
     def __str__(self) -> str:
 
