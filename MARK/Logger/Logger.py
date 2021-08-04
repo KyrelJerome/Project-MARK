@@ -1,19 +1,22 @@
 import csv
 import zipfile
 import numpy as np
-from typing import Any, Dict
+from typing import Any, Dict, List
 import matplotlib.pyplot as plt
 import statistics
 from zipfile import ZipFile
 import os
 import glob
-import pandas as pd
-from pandas.core.algorithms import mode
+import subprocess, sys
+
+
+# import pandas as pd
+# from pandas.core.algorithms import mode
 
 
 class Logger:
 
-    def __init__(self, StudentModels: List[StudentsModel]):
+    def __init__(self, StudentModels):
         """
         Logger/Cataloguer base to receive the results of the graded assignment and organize the data.
         """
@@ -27,13 +30,13 @@ class Logger:
         Formats the header of the csv file in the following format: [UtorID, Q1, Q2, Q3,....,Qn, Final Mark],
         where n is the number of questions in the assignment.
 
-        TO DO: self.StudentModels[0].get_results is used to find the number of items in the returned list equivalent to number of assignment questions. 
+        TO DO: self.StudentModels[0].get_results is used to find the number of items in the returned list equivalent to number of assignment questions.
         Refactor to callable variable in next iteration.
         """
         header = ['UtorID']
 
-        for i in range(len(self.StudentModels[0].get_results)):
-            header.append("Q"+(i+1))
+        for i in range(len(self.StudentModels[0].get_results())):
+            header.append("Q"+str(i+1))
 
         header.append("Final Mark")
 
@@ -46,12 +49,12 @@ class Logger:
         """
         csv_filename = "results."+assignment_name+".csv"
 
-        csv_header = format_csv_header()
+        csv_header = self.format_csv_header()
         rows = []
         for student in self.StudentModels:
-            student_row = [student.get_utorid]
-            student_row.extend(student.get_results)
-            student_row.extend(student.get_final_mark)
+            student_row = [student.get_utorid()]
+            student_row.extend(student.get_results())
+            student_row.append(student.get_final_mark())
             rows.append(student_row)
 
         # Declare full pathway
@@ -90,7 +93,7 @@ class Logger:
         for student in self.StudentModels:
             final_mark = student.get_final_mark()
             all_finals.append(final_mark)
-            all_sub_results.append(student.sub_results)
+            all_sub_results.append(student.get_results())
 
             if final_mark < 0.50:
                 failures += 1
@@ -102,19 +105,19 @@ class Logger:
                     perfects += 1
 
         # Number of students with a perfect score (i.e. 100%)
-        self.analyticsModel[num_perfects] = perfects
+        self.analyticsModel["num_perfects"] = perfects
 
         # Number of students who failed
-        self.analyticsModel[num_failures] = failures
+        self.analyticsModel["num_failures"] = failures
 
         # Number of students who passed
-        self.analyticsModel[num_passes] = passes
+        self.analyticsModel["num_passes"] = passes
 
         # Number of students receiving grade of zero
-        self.analyticsModel[num_zeroes] = zeroes
+        self.analyticsModel["num_zeroes"] = zeroes
 
         # Calculate mean per assignment question
-        num_questions = len(self.StudentModels[0].get_results)
+        num_questions = len(self.StudentModels[0].get_results())
         question_marks = []
         question_averages = {}  # Format: {Question #: Question Average}
 
@@ -123,27 +126,27 @@ class Logger:
 
         for results_list in all_sub_results:
             index = 0
-            for mark in results_list:
-                question_marks[index].append(mark)
+            for result_model in results_list:
+                question_marks[index].append(result_model.get_question_mark())
                 index += 1
 
         for i in range(num_questions):
-            question_averages["Q"+(i+1)] = statistics.mean(question_marks[i])
+            question_averages["Q"+str(i+1)] = statistics.mean(question_marks[i])
 
         # Mean per question
-        self.analyticsModel[mean_per_question] = question_averages
+        self.analyticsModel["mean_per_question"] = question_averages
 
         # Total Mean of Final Marks
-        self.analyticsModel[total_mean] = statistics.mean(all_finals)
+        self.analyticsModel["total_mean"] = statistics.mean(all_finals)
 
         # Total Median of Final Marks
-        self.analyticsModel[total_median] = statistics.median(all_finals)
+        self.analyticsModel["total_median"] = statistics.median(all_finals)
 
         # Mode of Final Marks
-        self.analyticsModel[total_mode] = statistics.mode(all_finals)
+        self.analyticsModel["total_mode"] = statistics.mode(all_finals)
 
         if visuals:
-            createAnalyticsVisual(assignment_name, container_path)
+            self.createAnalyticsVisual(assignment_name, container_path)
 
     def createAnalyticsVisual(self, assignment_name: str, container_path: str):
         """
@@ -164,55 +167,56 @@ class Logger:
                 "Analytics Model has not been generated. Cannot create Analaytics Visuals")
             return None
 
+
         visuals_folderpath = container_path+"/AnalyticModelVisuals"
 
         # Generates Figure 1.
         fig_1 = plt.figure()
-        fig_1.title("Figure 1: Average Marks Per Question")
-        fig_1.add_axes([0, 0, 1, 1])
+        fig_1.suptitle("Figure 1: Average Marks Per Question")
+        ax = fig_1.add_axes([0, 0, 1, 1])
 
-        Qs = self.analyticsModel[mean_per_question].keys()
+        Qs = self.analyticsModel["mean_per_question"].keys()
         xlabels = []
         for i in Qs:
             label = "Q"+i
             xlabels.append(label)
 
-        ylabels = self.analyticsModel[mean_per_question].values()
-        fig_1.bar(xlabels, ylabels)
+        ylabels = self.analyticsModel["mean_per_question"].values()
+        ax.bar(xlabels, ylabels)
         fig_1.savefig(
             visuals_folderpath+"Mean_per_Question.png")
 
         # Generate Figure 2
-        final_marks = []
-        for student in self.StudentModels:
-            final_marks.append(student.get_final_mark())
-
-        fig_2 = plt.figure()
-        final_marks.plot(kind='hist', color='whitesmoke', edgecolor='gray')
-        fig_2.xlabel('Total Marks', labelpad=15)
-        fig_2.ylabel('Frequency', labelpad=15)
-        fig_2.title(
-            "Figure 2: Frequency of Total Marks with Total Mean, Median and Mode")
-        measurements = [self.analyticsModel[total_mean],
-                        self.analyticsModel[total_median], self.analyticsModel[total_mode]]
-        names = ["Mean", "Median", "Mode"]
-        colors = ["green", "blue", "orange"]
-
-        for measurement, name, color in zip(measurements, names, colors):
-            fig_2.axvline(x=measurement, linestyle='--', linewidth=2.5,
-                          label='{0} at {1}'.format(name, measurement), c=color)
-        fig_2.legend()
-
-        fig_2.savefig(visuals_folderpath+"Mean_per_Question.png")
+        # final_marks = []
+        # for student in self.StudentModels:
+        #     final_marks.append(student.get_final_mark())
+        #
+        # fig_2 = plt.figure()
+        # final_marks.plot(kind='hist', color='whitesmoke', edgecolor='gray')
+        # fig_2.xlabel('Total Marks', labelpad=15)
+        # fig_2.ylabel('Frequency', labelpad=15)
+        # fig_2.title(
+        #     "Figure 2: Frequency of Total Marks with Total Mean, Median and Mode")
+        # measurements = [self.analyticsModel["total_mean"],
+        #                 self.analyticsModel["total_median"], self.analyticsModel["total_mode"]]
+        # names = ["Mean", "Median", "Mode"]
+        # colors = ["green", "blue", "orange"]
+        #
+        # for measurement, name, color in zip(measurements, names, colors):
+        #     fig_2.axvline(x=measurement, linestyle='--', linewidth=2.5,
+        #                   label='{0} at {1}'.format(name, measurement), c=color)
+        # fig_2.legend()
+        #
+        # fig_2.savefig(visuals_folderpath+"Mean_per_Question.png")
 
         # Generate Figure 3
         fig_3 = plt.figure()
-        fig_3.add_axes([0, 0, 1, 1])
-        fig_3.axis('equal')
+        ax = fig_3.add_axes([0, 0, 1, 1])
+        ax.axis('equal')
         descriptors = ["Passed", "Failed", "Perfect Score", "Zero Grade"]
-        counts = [self.analyticsModel[num_passes], self.analyticsModel[num_failures],
-                  self.analyticsModel[num_perfects], self.analyticsModel[num_zeroes]]
-        fig_3(counts, labels=descriptors, autopct='%1.2f%%')
+        counts = [self.analyticsModel["num_passes"], self.analyticsModel["num_failures"],
+                  self.analyticsModel["num_perfects"], self.analyticsModel["num_zeroes"]]
+        ax.pie(counts, labels=descriptors, autopct='%1.2f%%')
         fig_3.savefig(
             visuals_folderpath+"Proportions_Pie_Chart.png")
 
@@ -227,7 +231,9 @@ class Logger:
             outputfile.write(html)
 
         # Automatically open HTML file to view
-        os.startfile(visual_file)
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, visual_file])
+        # os.startfile(visual_file)
 
     def get_analayticsModel(self) -> Dict:
         """

@@ -58,6 +58,6 @@ class ResultsModel:
 
     def __str__(self) -> str:
         message = "Question name: \n\"" + self.question_name + "\"\n"
-        message += "Question mark: \n\"" + self.question_mark + "\"\n"
-        message += "Question worth: \n\"" + self.question_worth + "\"\n"
+        message += "Question mark: \n\"" + str(self.question_mark) + "\"\n"
+        message += "Question worth: \n\"" + str(self.question_worth) + "\"\n"
         return message

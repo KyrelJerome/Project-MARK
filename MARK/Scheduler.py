@@ -5,6 +5,7 @@ import shutil
 import re
 import signal
 import Util
+import subprocess
 
 '''
     Schedules grading for a specific assignment.
@@ -12,15 +13,17 @@ import Util
 '''
 
 class Scheduler:
-    def __init__(self, container_path: str, assignmentModel: Common.AssignmentModel):
+    def __init__(self, blanks: str, container_path: str, assignmentModel: Common.AssignmentModel):
         self.base_dir = container_path
+        self.blanks_dir = blanks
         self.assignment_name = assignmentModel.name
         self.injection_locations = assignmentModel.injection_locations
 
         self.student_submission_directory = assignmentModel.student_submission_directory
         self.starter_code_directory = assignmentModel.starter_code_directory
 
-        self.utorids = os.listdir(self.student_submission_directory)    # TODO: This feels like a bad idea...
+        self.utorids = self.getUtorids(self.student_submission_directory)
+
         self.tests = assignmentModel.tests
 
         self.file_name_pattern = assignmentModel.file_name_pattern
@@ -30,7 +33,7 @@ class Scheduler:
 
     def markAll(self):
 
-        swissArmyKnife = Util()
+        swissArmyKnife = Util.Util()
 
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
@@ -42,16 +45,24 @@ class Scheduler:
             # create env - making exclusive starter code.
             student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
+            print("Creating Student Container: " + student_container)
 
             # move submissions into the said env
             for injections in self.injection_locations:
                 submission_location = os.path.basename(injections)
                 location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
-                shutil.copy(location_from, location_to)
+
+                if Common.FileUtility.doesFileExist(location_from + injections):
+                    shutil.copy(location_from, location_to)
+                else:
+                    location_from_blank = self.blanks_dir + injections
+                    shutil.copy(location_from_blank, location_to)
+
+
 
             # Creating Student Mark Model
-            student_model = Common.StudentModel.StudentModel()
+            student_model = Common.StudentModel()
             student_model.set_utorid(student_utorid)
 
             # run the tests
@@ -94,7 +105,7 @@ class Scheduler:
             self.student_marks.append(student_model)
 
             # Creating The Receipt
-            self.createStudentReceipt(self, student_model, student_container)
+            self.createStudentReceipt(student_model, student_container)
 
 
 
@@ -103,7 +114,7 @@ class Scheduler:
 
         # Creating The Receipt Body
         receipt_body = self.assignment_name + " - \"" + sm_object.get_utorid() + "\" Marking Receipt.\n"
-        for resmod in sm_object.get_children():
+        for resmod in sm_object.get_results():
             receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
 
         receipt_body += "\n\nTotal Assignment Mark: " + str(sm_object.get_final_mark())
@@ -118,6 +129,11 @@ class Scheduler:
         f.write( receipt_body )
         f.close()
 
+    def getUtorids(self, submissions_dir):
+        if Common.FileUtility.doesDirExist(submissions_dir):
+            return os.listdir(submissions_dir)
+        else:
+            raise FileNotFoundError("student_submission_directory: Invalid file path within configuration.")
 
     def getAssignmentResults(self):
         return self.student_marks, self.student_marks_dir

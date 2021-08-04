@@ -2,7 +2,7 @@ from Scheduler import Scheduler
 import Common
 import os
 import shutil
-import Logger
+from Logger import Logger
 '''
     Carries the task of building an environment for use when marking.
     Creates the folder structures required for consistent and safe marking.
@@ -25,8 +25,11 @@ class Supervisor:
             container_path = path + assignment.name + "-marking-container"
             os.mkdir(container_path)
 
+            # Getting Blanks Directory
+            blanks_path = path + "blanks"
+
             # Handling the Scheduler
-            assignment_scheduler = Scheduler(container_path, assignment)
+            assignment_scheduler = Scheduler(blanks_path, container_path, assignment)
 
             print("- Starting marking sequence.\n")
             assignment_scheduler.markAll()
@@ -36,6 +39,8 @@ class Supervisor:
 
             # Handling Logger and Cataloguer
             print("- Supervisor giving the Logger/Cataloguer the results\n")
+
+
             lc_object = Logger.Logger(resultsList)  #resultsList is a list filled with StudentModel elements
             lc_object.createCSV(container_path, assignment.name)
             lc_object.createAnalytics(container_path, assignment.name, True) # Third Parameter is the visualizer

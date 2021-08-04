@@ -1,0 +1,40 @@
+---
+program:
+    M.A.R.K
+assignments:
+    # ==========================================================================
+    - name:
+          assignment1
+      student_submission_directory:
+          ./student_submissions
+      starter_code_directory:
+          ./starter_code
+      file_name_pattern:
+          UTORID-CSC148-ASSIGNMENT1-Result.txt # i.e. UTORID-CSC148-ASSIGNMENT#-Result.txt # It is crucial for UTORID and ASSIGNMENT# to be there since they get parsed.
+      injection_locations:  # relative to where it would be in the starter code
+          - /OnitamaBoard_Tests.py
+          - /OnitamaBoard.py
+          - /OnitamaGame_Tests.py
+          - /OnitamaGame.py
+          - /OnitamaStack.py
+          - /Player.py
+          - /Style.py
+          - /Turn.py
+      tests: # things under here needs to be fixed.
+          - prep_command: echo "Starting Marking"
+            marking_command: python3 autograder.py
+            timeout: 900 # if not needed, set as -1
+            worth: 1  # needs to be between [0,1]
+
+      total_worth:
+          100
+      creates_analytics_file:
+          True # it can save it in a txt file ready for usage
+      creates_csv_file:
+          True # comment
+      to_percents:
+          False # final values to percents as QOL feature.
+    # ==========================================================================
+does_clean_flag: False # burn time full wiping the leftovers?
+
+...

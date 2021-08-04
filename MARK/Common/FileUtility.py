@@ -9,11 +9,18 @@ class FileUtility:
         '''
         Returns true if a file exists
         '''
-        return os.doesExist(path) and os.isfile(path)
+        return os.path.exists(path) and os.path.isfile(path)
 
     @staticmethod
     def doesPathExist(path:str)-> bool:
         '''
         Returns true if a path exists
         '''
-        return os.exists(path)
+        return os.path.exists(path)
+
+    @staticmethod
+    def doesDirExist(path:str)->bool:
+        '''
+        Returns true if a file exists
+        '''
+        return os.path.exists(path) and os.path.isdir(path)

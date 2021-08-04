@@ -1,4 +1,3 @@
-from MARK.Common.FileUtility import FileUtility
 import Common
 
 class AssignmentModel:
@@ -11,7 +10,7 @@ class AssignmentModel:
 
         # what if these don't exist? or are not the files that are actually in the submissions folder?
         self.injection_locations = assignment_config["injection_locations"]
-        
+
         # What if this directory doesn't exist?
         self.starter_code_directory = assignment_config["starter_code_directory"]
 
@@ -34,12 +33,19 @@ class AssignmentModel:
         for test_config in assignment_config["tests"]:
             self.tests.append(Common.TestModel(test_config))
 
-        valid_student_sub_dir = FileUtility.doesFileExist(self.student_submission_directory)
-        valid_injection_path = FileUtility.doesPathExist(self.injection_locations)
-        valid_starter_code_dir = FileUtility.doesPathExist(self.starter_code_directory)
+        valid_student_sub_dir = Common.FileUtility.doesDirExist(self.student_submission_directory)
+
+        # valid_injection_path = True
+        # for location in self.injection_locations:
+        #     valid_injection_path = valid_injection_path and Common.FileUtility.doesPathExist(location)
+
+        valid_starter_code_dir = Common.FileUtility.doesPathExist(self.starter_code_directory)
+
         # Check if required files exist
-        if not valid_student_sub_dir or not valid_starter_code_dir or not valid_injection_path:
-            raise FileNotFoundError("Invalid file path within configuration.")
+        if not valid_student_sub_dir or not valid_starter_code_dir:
+            # print(os.getcwd())
+            # exit(1)
+            raise FileNotFoundError("Invalid file path within configuration. (" + str(valid_student_sub_dir) + str(valid_starter_code_dir) + ")")
 
     def __str__(self) -> str:
 

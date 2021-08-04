@@ -1,3 +1,10 @@
 .gitignore
 */__pycache__/*
+__pycache__/*
+*.pyc
 marker_env/*
+starter_code/*
+student_submissions/*
+student_mark/*
+assignment1-marking-container/*
+blanks/*
