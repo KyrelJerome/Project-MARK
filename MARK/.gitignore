@@ -2,6 +2,7 @@
 */__pycache__/*
 __pycache__/*
 *.pyc
+mark_env/*
 marker_env/*
 starter_code/*
 student_submissions/*

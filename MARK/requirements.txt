@@ -1,2 +1,3 @@
 PyYAML==5.4.1
 Seshat==0.3.1
+xmpppy==0.6.2
