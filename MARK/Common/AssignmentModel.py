@@ -1,3 +1,4 @@
+from MARK.Common.FileUtility import FileUtility
 import Common
 
 class AssignmentModel:
@@ -10,7 +11,7 @@ class AssignmentModel:
 
         # what if these don't exist? or are not the files that are actually in the submissions folder?
         self.injection_locations = assignment_config["injection_locations"]
-
+        
         # What if this directory doesn't exist?
         self.starter_code_directory = assignment_config["starter_code_directory"]
 
@@ -32,6 +33,10 @@ class AssignmentModel:
         self.tests = []
         for test_config in assignment_config["tests"]:
             self.tests.append(Common.TestModel(test_config))
+
+        # Check if required files exist
+        if FileUtility.doesFileExist(self.student_submission_directory) or FileUtility.doesPathExist(self.injection_locations):
+            raise FileNotFoundError("Invalid file path within configuration")
 
     def __str__(self) -> str:
 
