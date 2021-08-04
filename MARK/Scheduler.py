@@ -13,9 +13,10 @@ import subprocess
 '''
 
 class Scheduler:
-    def __init__(self, blanks: str, container_path: str, assignmentModel: Common.AssignmentModel):
+    def __init__(self, receipt_dir: str, blanks: str, container_path: str, assignmentModel: Common.AssignmentModel):
         self.base_dir = container_path
         self.blanks_dir = blanks
+        self.receipt_dir = receipt_dir
         self.assignment_name = assignmentModel.name
         self.injection_locations = assignmentModel.injection_locations
 
@@ -65,6 +66,8 @@ class Scheduler:
             student_model = Common.StudentModel()
             student_model.set_utorid(student_utorid)
 
+            anchor = os.getcwd()
+
             # run the tests
             for test in self.tests:
                 # running the prep commands
@@ -74,7 +77,10 @@ class Scheduler:
                 signal.signal(signal.SIGALRM, signal_handler)
                 signal.alarm(test.timeout)
                 try:
-                    output = subprocess.check_output(test.marking_command, shell=True)
+
+                    os.chdir(student_container)
+                    output = subprocess.check_output(test.marking_command, shell=True).decode("utf-8")
+                    os.chdir(anchor)
 
                     # Adaptor
                     my_adapter = Adapters.BaseAdapter()
@@ -98,6 +104,8 @@ class Scheduler:
                     student_model.add_result(results_object)
 
 
+
+
             # Calculates the Final Mark of the Student
             swissArmyKnife.crunchTheNumbers(student_model)
 
@@ -105,12 +113,12 @@ class Scheduler:
             self.student_marks.append(student_model)
 
             # Creating The Receipt
-            self.createStudentReceipt(student_model, student_container)
+            self.createStudentReceipt(student_model, self.receipt_dir)
 
 
 
 
-    def createStudentReceipt(self, sm_object, container_location):
+    def createStudentReceipt(self, sm_object, location_of_receipt):
 
         # Creating The Receipt Body
         receipt_body = self.assignment_name + " - \"" + sm_object.get_utorid() + "\" Marking Receipt.\n"
@@ -122,7 +130,7 @@ class Scheduler:
         # Constructing the Unique File name
         fn1 = re.sub("UTORID", sm_object.get_utorid(), self.file_name_pattern)
         fn2 = re.sub("ASSIGNMENT#", self.assignment_name, fn1)
-        file_name = container_location + "/" + fn2 + ".txt"
+        file_name = location_of_receipt + "/" + fn2
 
         # Creating the Receipt
         f = open( file_name , 'w' )

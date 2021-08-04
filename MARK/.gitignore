@@ -8,3 +8,7 @@ student_submissions/*
 student_mark/*
 assignment1-marking-container/*
 blanks/*
+*/.DS_Store
+.DS_Store
+student_marks/*
+Visual_Analytics_HTML

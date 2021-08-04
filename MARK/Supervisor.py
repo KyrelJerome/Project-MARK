@@ -25,11 +25,12 @@ class Supervisor:
             container_path = path + assignment.name + "-marking-container"
             os.mkdir(container_path)
 
-            # Getting Blanks Directory
+            # Getting Directories
             blanks_path = path + "blanks"
+            receipt_path = path + "student_marks"
 
             # Handling the Scheduler
-            assignment_scheduler = Scheduler(blanks_path, container_path, assignment)
+            assignment_scheduler = Scheduler(receipt_path ,blanks_path, container_path, assignment)
 
             print("- Starting marking sequence.\n")
             assignment_scheduler.markAll()

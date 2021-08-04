@@ -168,7 +168,8 @@ class Logger:
             return None
 
 
-        visuals_folderpath = container_path+"/AnalyticModelVisuals"
+        visuals_folderpath = container_path+"/Analytic_ModelVisuals"
+        print(visuals_folderpath)
 
         # Generates Figure 1.
         fig_1 = plt.figure()
@@ -183,8 +184,9 @@ class Logger:
 
         ylabels = self.analyticsModel["mean_per_question"].values()
         ax.bar(xlabels, ylabels)
+        fig_1.show()
         fig_1.savefig(
-            visuals_folderpath+"Mean_per_Question.png")
+            visuals_folderpath+"_Mean_per_Question.png")
 
         # Generate Figure 2
         # final_marks = []
@@ -218,17 +220,27 @@ class Logger:
                   self.analyticsModel["num_perfects"], self.analyticsModel["num_zeroes"]]
         ax.pie(counts, labels=descriptors, autopct='%1.2f%%')
         fig_3.savefig(
-            visuals_folderpath+"Proportions_Pie_Chart.png")
+            visuals_folderpath+"_Proportions_Pie_Chart.png")
 
         visual_file = container_path+"/"+"Visual_Analytics_"+assignment_name+".html"
 
         # Write all images to HTML file visual_file
-        html = ""
-        for file in glob.glob(visuals_folderpath+"/*.png"):
-            html += f"<img src='{file}'/><br>"
+        html = open("Visual_Analytics_HTML", "x")
+        message = ""
 
-        with open(visual_file, 'w') as outputfile:
-            outputfile.write(html)
+        print("html mannnneee")
+        for file in glob.glob(visuals_folderpath+"/*.png"):
+            print(file)
+            message += f + "<img src='{file}'/><br>"
+
+        print(message)
+        html.write(message)
+        html.close()
+
+        print("html mannnneee")
+
+        # with open(visual_file, 'w') as outputfile:
+        #     outputfile.write(html)
 
         # Automatically open HTML file to view
         opener = "open" if sys.platform == "darwin" else "xdg-open"
