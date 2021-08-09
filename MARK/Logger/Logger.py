@@ -36,9 +36,10 @@ class Logger:
         header = ['UtorID']
 
         for i in range(len(self.StudentModels[0].get_results())):
-            header.append("Q"+str(i+1))
+            questions_worth = self.StudentModels[0].get_results()[i].get_question_worth()
+            header.append("Q"+str(i+1)+" Worth: "+str(questions_worth)+"/1 (in %)")
 
-        header.append("Final Mark")
+        header.append("Final Mark (in %)")
 
         return header
 
@@ -52,8 +53,12 @@ class Logger:
         csv_header = self.format_csv_header()
         rows = []
         for student in self.StudentModels:
+
             student_row = [student.get_utorid()]
-            student_row.extend(student.get_results())
+
+            for subResult in student.get_results():
+                student_row.append(subResult.get_question_mark()*100)
+
             student_row.append(student.get_final_mark())
             rows.append(student_row)
 
@@ -68,6 +73,8 @@ class Logger:
 
         # Update class attribute self.csv_pathway
         self.csv_pathway = pathway
+
+        print(self.csv_pathway)
 
     def createAnalytics(self, container_path: str, assignment_name: str, visuals: bool) -> None:
         """"
