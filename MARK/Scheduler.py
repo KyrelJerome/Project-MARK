@@ -123,9 +123,9 @@ class Scheduler:
         # Creating The Receipt Body
         receipt_body = self.assignment_name + " - \"" + sm_object.get_utorid() + "\" Marking Receipt.\n"
         for resmod in sm_object.get_results():
-            receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "\n====================\n"
+            receipt_body += "====================\n" + resmod.get_question_name() + "\n====================\n" + resmod.get_question_notes()[0] + "====================\n"
 
-        receipt_body += "\n\nTotal Assignment Mark: " + str(sm_object.get_final_mark())
+        receipt_body += "\nTotal Assignment Mark: " + str(sm_object.get_final_mark())
 
         # Constructing the Unique File name
         fn1 = re.sub("UTORID", sm_object.get_utorid(), self.file_name_pattern)
