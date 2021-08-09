@@ -117,7 +117,7 @@ class Scheduler:
 
 
 
-
+    # TODO: Maybe change the location of this method from Scheduler to either Util or Logger. Feels more appropriate if it's placed there. 
     def createStudentReceipt(self, sm_object, location_of_receipt):
 
         # Creating The Receipt Body
