@@ -8,6 +8,7 @@ from zipfile import ZipFile
 import os
 import glob
 import subprocess, sys
+import dominate
 
 
 # import pandas as pd
@@ -173,6 +174,7 @@ class Logger:
             print("Analytics Model has not been generated. Cannot create Analaytics Visuals")
             return None
 
+        png_files = []
 
         visuals_folderpath = container_path+"/Analytic_ModelVisuals"
         # print(visuals_folderpath)
@@ -193,6 +195,7 @@ class Logger:
         plt.ylim(0, 1)
         # plt.show()
         fig_1.savefig(visuals_folderpath+"_Mean_per_Question.png")
+        png_files.append(visuals_folderpath+"_Mean_per_Question.png")
 
         # Generate Figure 2 - Final Mark Mean, Mode, and Median
         final_marks = []
@@ -221,7 +224,7 @@ class Logger:
         plt.ylim(0, 100)
         # plt.show()
         fig_2.savefig(visuals_folderpath+"_Mean_Mode_Median.png")
-
+        png_files.append(visuals_folderpath+"_Mean_Mode_Median.png")
 
         # Generate Figure 3
         fig_3 = plt.figure()
@@ -241,34 +244,31 @@ class Logger:
         # plt.ylim(0, max(counts)+10)
         # plt.show()
         fig_3.savefig(visuals_folderpath+"_Proportions_Pie_Chart.png")
+        png_files.append(visuals_folderpath+"_Proportions_Pie_Chart.png")
 
-
-        exit(1)
-
+        # ======================================================================
+        # Write all images to HTML file visual_file
         visual_file = container_path+"/"+"Visual_Analytics_"+assignment_name+".html"
 
-        # Write all images to HTML file visual_file
-        html = open("Visual_Analytics_HTML", "x")
-        message = ""
+        # self.createHTMLPage()
 
-        print("html mannnneee")
-        for file in glob.glob(visuals_folderpath+"/*.png"):
-            # print(file)
-            message += f + "<img src='{file}'/><br>"
-
-        # print(message)
-        html.write(message)
-        html.close()
-
-        print("html mannnneee")
+        # html = open(visual_file, "x")
+        #
+        # body_message = ""
+        # for file in png_files:
+        #     body_message += "<img src='{"+os.getcwd()+"/"+file+"}'/><br>"
+        #
+        # html.write(start_message+body_message+end_message)
+        # html.close()
 
         # with open(visual_file, 'w') as outputfile:
         #     outputfile.write(html)
 
         # Automatically open HTML file to view
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, visual_file])
+        # opener = "open" if sys.platform == "darwin" else "xdg-open"
+        # subprocess.call([opener, visual_file])
         # os.startfile(visual_file)
+        # ======================================================================
 
     def get_analayticsModel(self) -> Dict:
         """
@@ -298,3 +298,15 @@ class Logger:
             for object in objects:
                 myzip.write(object)
         # myzip file is closed automatically
+
+    def createHTMLPage(self):
+        doc = dominate.document(title="Dan's Test")
+
+        with doc.head:
+            link(rel='stylesheet', href='style.css')
+            script(type='text/javascript', src='script.js')
+        with doc:
+            with div(cls='container'):
+                h1('Hello World')
+
+        print(doc)
