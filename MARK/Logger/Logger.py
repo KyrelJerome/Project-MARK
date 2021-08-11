@@ -8,6 +8,7 @@ from zipfile import ZipFile
 import os
 import glob
 import subprocess, sys
+import dominate
 
 
 # import pandas as pd
@@ -36,9 +37,10 @@ class Logger:
         header = ['UtorID']
 
         for i in range(len(self.StudentModels[0].get_results())):
-            header.append("Q"+str(i+1))
+            questions_worth = self.StudentModels[0].get_results()[i].get_question_worth()
+            header.append("Q"+str(i+1)+" Worth: "+str(questions_worth)+"/1 (in %)")
 
-        header.append("Final Mark")
+        header.append("Final Mark (in %)")
 
         return header
 
@@ -52,8 +54,12 @@ class Logger:
         csv_header = self.format_csv_header()
         rows = []
         for student in self.StudentModels:
+
             student_row = [student.get_utorid()]
-            student_row.extend(student.get_results())
+
+            for subResult in student.get_results():
+                student_row.append(subResult.get_question_mark()*100)
+
             student_row.append(student.get_final_mark())
             rows.append(student_row)
 
@@ -95,14 +101,16 @@ class Logger:
             all_finals.append(final_mark)
             all_sub_results.append(student.get_results())
 
-            if final_mark < 0.50:
-                failures += 1
-                if final_mark == 0.00:
+            if final_mark < 50.0:
+                if final_mark == 0.0:
                     zeroes += 1
-            elif final_mark >= 0.50:
-                passes += 1
-                if final_mark == 1.00:
+                else:
+                    failures += 1
+            elif final_mark >= 50.0:
+                if final_mark == 100.0:
                     perfects += 1
+                else:
+                    passes += 1
 
         # Number of students with a perfect score (i.e. 100%)
         self.analyticsModel["num_perfects"] = perfects
@@ -163,89 +171,104 @@ class Logger:
         """
 
         if self.analyticsModel == {}:
-            print(
-                "Analytics Model has not been generated. Cannot create Analaytics Visuals")
+            print("Analytics Model has not been generated. Cannot create Analaytics Visuals")
             return None
 
+        png_files = []
 
         visuals_folderpath = container_path+"/Analytic_ModelVisuals"
-        print(visuals_folderpath)
+        # print(visuals_folderpath)
 
-        # Generates Figure 1.
-        fig_1 = plt.figure()
-        fig_1.suptitle("Figure 1: Average Marks Per Question")
-        ax = fig_1.add_axes([0, 0, 1, 1])
-
-        Qs = self.analyticsModel["mean_per_question"].keys()
-        xlabels = []
-        for i in Qs:
-            label = "Q"+i
-            xlabels.append(label)
-
+        xlabels = self.analyticsModel["mean_per_question"].keys()
         ylabels = self.analyticsModel["mean_per_question"].values()
-        ax.bar(xlabels, ylabels)
-        fig_1.show()
-        fig_1.savefig(
-            visuals_folderpath+"_Mean_per_Question.png")
 
-        # Generate Figure 2
-        # final_marks = []
-        # for student in self.StudentModels:
-        #     final_marks.append(student.get_final_mark())
-        #
+        # Generates Figure 1 - Average Marks Per Questions
+
+        # fig_1.suptitle("Figure 1: Average Marks Per Question")
+        # ax = fig_1.add_axes([0, 0, 1, 1])
+        # ax.bar(xlabels, ylabels)
+        # fig_1.show()
+        # fig_1.savefig(visuals_folderpath+"_Mean_per_Question.png")
+        fig_1 = plt.figure()
+        plt.bar(xlabels,ylabels, width=0.1)
+        plt.title("Figure 1: Average Marks Per Question")
+        plt.ylim(0, 1)
+        # plt.show()
+        fig_1.savefig(visuals_folderpath+"_Mean_per_Question.png")
+        png_files.append(visuals_folderpath+"_Mean_per_Question.png")
+
+        # Generate Figure 2 - Final Mark Mean, Mode, and Median
+        final_marks = []
+        for student in self.StudentModels:
+            final_marks.append(student.get_final_mark())
+
         # fig_2 = plt.figure()
         # final_marks.plot(kind='hist', color='whitesmoke', edgecolor='gray')
         # fig_2.xlabel('Total Marks', labelpad=15)
         # fig_2.ylabel('Frequency', labelpad=15)
-        # fig_2.title(
-        #     "Figure 2: Frequency of Total Marks with Total Mean, Median and Mode")
-        # measurements = [self.analyticsModel["total_mean"],
-        #                 self.analyticsModel["total_median"], self.analyticsModel["total_mode"]]
-        # names = ["Mean", "Median", "Mode"]
-        # colors = ["green", "blue", "orange"]
-        #
+        # fig_2.title("Figure 2: Frequency of Total Marks with Total Mean, Median and Mode")
+
+        measurements = [self.analyticsModel["total_mean"], self.analyticsModel["total_median"], self.analyticsModel["total_mode"]]
+
+        names = ["Mean", "Median", "Mode"]
+        colors = ["green", "blue", "orange"]
+
         # for measurement, name, color in zip(measurements, names, colors):
-        #     fig_2.axvline(x=measurement, linestyle='--', linewidth=2.5,
-        #                   label='{0} at {1}'.format(name, measurement), c=color)
-        # fig_2.legend()
+        #     fig_2.axvline(x=measurement, linestyle='--', linewidth=2.5, label='{0} at {1}'.format(name, measurement), c=color)
         #
-        # fig_2.savefig(visuals_folderpath+"Mean_per_Question.png")
+        # fig_2.legend()
+
+        fig_2 = plt.figure()
+        plt.bar(names, measurements, width=0.5)
+        plt.title("Figure 2: Frequency of Total Marks with Total Mean(1), Median(2) and Mode(3)")
+        plt.ylim(0, 100)
+        # plt.show()
+        fig_2.savefig(visuals_folderpath+"_Mean_Mode_Median.png")
+        png_files.append(visuals_folderpath+"_Mean_Mode_Median.png")
 
         # Generate Figure 3
         fig_3 = plt.figure()
-        ax = fig_3.add_axes([0, 0, 1, 1])
-        ax.axis('equal')
-        descriptors = ["Passed", "Failed", "Perfect Score", "Zero Grade"]
-        counts = [self.analyticsModel["num_passes"], self.analyticsModel["num_failures"],
-                  self.analyticsModel["num_perfects"], self.analyticsModel["num_zeroes"]]
-        ax.pie(counts, labels=descriptors, autopct='%1.2f%%')
-        fig_3.savefig(
-            visuals_folderpath+"_Proportions_Pie_Chart.png")
+        # ax = fig_3.add_axes([0, 0, 1, 1])
+        # ax.axis('equal')
 
+        colors = ["yellowgreen", "lightcoral", "gold", "lightblue"]
+        labels = ["Passed", "Failed", "Perfect Score", "Zero Grade"]
+        explode = (0, 0, 0, 0.25)
+        counts = [self.analyticsModel["num_passes"], self.analyticsModel["num_failures"], self.analyticsModel["num_perfects"], self.analyticsModel["num_zeroes"]]
+
+        # mock_counts = [23, 42, 28, 12]
+
+        plt.pie(counts, explode=explode, shadow=False,labels=labels, colors=colors, autopct='%1.1f%%')
+
+        plt.title("Figure 3: Number of Passed, Failed, Perfects and Zeros")
+        # plt.ylim(0, max(counts)+10)
+        # plt.show()
+        fig_3.savefig(visuals_folderpath+"_Proportions_Pie_Chart.png")
+        png_files.append(visuals_folderpath+"_Proportions_Pie_Chart.png")
+
+        # ======================================================================
+        # Write all images to HTML file visual_file
         visual_file = container_path+"/"+"Visual_Analytics_"+assignment_name+".html"
 
-        # Write all images to HTML file visual_file
-        html = open("Visual_Analytics_HTML", "x")
-        message = ""
+        # self.createHTMLPage()
 
-        print("html mannnneee")
-        for file in glob.glob(visuals_folderpath+"/*.png"):
-            print(file)
-            message += f + "<img src='{file}'/><br>"
-
-        print(message)
-        html.write(message)
-        html.close()
-
-        print("html mannnneee")
+        # html = open(visual_file, "x")
+        #
+        # body_message = ""
+        # for file in png_files:
+        #     body_message += "<img src='{"+os.getcwd()+"/"+file+"}'/><br>"
+        #
+        # html.write(start_message+body_message+end_message)
+        # html.close()
 
         # with open(visual_file, 'w') as outputfile:
         #     outputfile.write(html)
 
         # Automatically open HTML file to view
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, visual_file])
+        # opener = "open" if sys.platform == "darwin" else "xdg-open"
+        # subprocess.call([opener, visual_file])
         # os.startfile(visual_file)
+        # ======================================================================
 
     def get_analayticsModel(self) -> Dict:
         """
@@ -275,3 +298,15 @@ class Logger:
             for object in objects:
                 myzip.write(object)
         # myzip file is closed automatically
+
+    def createHTMLPage(self):
+        doc = dominate.document(title="Dan's Test")
+
+        with doc.head:
+            link(rel='stylesheet', href='style.css')
+            script(type='text/javascript', src='script.js')
+        with doc:
+            with div(cls='container'):
+                h1('Hello World')
+
+        print(doc)
