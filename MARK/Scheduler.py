@@ -46,7 +46,7 @@ class Scheduler:
             # create env - making exclusive starter code.
             student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
-            print("Creating Student Container: " + student_container)
+            print("- Creating Student Container: " + student_container)
 
             # move submissions into the said env
             for injections in self.injection_locations:
@@ -55,8 +55,11 @@ class Scheduler:
                 location_to = student_container + os.path.dirname(injections)
 
                 if Common.FileUtility.doesFileExist(location_from + injections):
+                    print("- Found " + location_from + injections)
                     shutil.copy(location_from, location_to)
                 else:
+                    print("- WARNING: Could not find file: " + location_from + injections)
+                    print("- Using a blank file instead.")
                     location_from_blank = self.blanks_dir + injections
                     shutil.copy(location_from_blank, location_to)
 
@@ -69,6 +72,7 @@ class Scheduler:
             anchor = os.getcwd()
 
             # run the tests
+            print("- Running tests now for " + student_utorid)
             for test in self.tests:
                 # running the prep commands
                 os.system(test.prep_command)
@@ -82,7 +86,7 @@ class Scheduler:
                     output = subprocess.check_output(test.marking_command, shell=True).decode("utf-8")
                     os.chdir(anchor)
 
-                    # Adaptor
+                    # Adapter
                     my_adapter = Adapters.BaseAdapter()
                     results_object = my_adapter.parseOutput(output)
                     results_object.set_question_name("Output of \"" + test.marking_command + "\"")
@@ -90,6 +94,8 @@ class Scheduler:
                     results_object.set_question_worth(test.worth)
 
                     student_model.add_result(results_object)
+                    print("- Test completed successfully!")
+
 
 
                 except Exception as e:
@@ -114,12 +120,13 @@ class Scheduler:
 
             # Creating The Receipt
             self.createStudentReceipt(student_model, self.receipt_dir)
+            print("- Finished marking " + student_utorid)
 
 
 
     # TODO: Maybe change the location of this method from Scheduler to either Util or Logger. Feels more appropriate if it's placed there. 
     def createStudentReceipt(self, sm_object, location_of_receipt):
-
+        print(" - Creating receipt")
         # Creating The Receipt Body
         receipt_body = self.assignment_name + " - \"" + sm_object.get_utorid() + "\" Marking Receipt.\n"
         for resmod in sm_object.get_results():

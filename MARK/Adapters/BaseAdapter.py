@@ -14,5 +14,4 @@ class BaseAdapter:
         denominator = float(res.group(2))
         results.set_question_mark(numerator/denominator)
 
-
         return results
