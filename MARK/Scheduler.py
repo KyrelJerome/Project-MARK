@@ -54,11 +54,11 @@ class Scheduler:
                 location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
 
-                if Common.FileUtility.doesFileExist(location_from + injections):
-                    print("- Found " + location_from + injections)
+                if Common.FileUtility.doesFileExist(location_from):
+                    print("- Found " + location_from)
                     shutil.copy(location_from, location_to)
                 else:
-                    print("- WARNING: Could not find file: " + location_from + injections)
+                    print("- WARNING: Could not find file: " + location_from)
                     print("- Using a blank file instead.")
                     location_from_blank = self.blanks_dir + injections
                     shutil.copy(location_from_blank, location_to)
@@ -96,8 +96,8 @@ class Scheduler:
                     print(mc_error)
 
                 # Adaptor
-                my_adapter = Adapters.Test2Adapter()
-                results_object = my_adapter.parseOutput(mc_output + "\n" + mc_error)
+                my_adapter = Adapters.BaseAdapter()
+                results_object = my_adapter.parseOutput(mc_output, mc_error)
 
 
                 results_object.set_question_name("Output of \"" + test.marking_command + "\"")
