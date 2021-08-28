@@ -96,7 +96,7 @@ class Scheduler:
                     print(mc_error)
 
                 # Adaptor
-                my_adapter = Adapters.BaseAdapter()
+                my_adapter = Adapters.A2_Adapter()
                 results_object = my_adapter.parseOutput(mc_output, mc_error)
 
 
