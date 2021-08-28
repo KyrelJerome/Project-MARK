@@ -221,7 +221,19 @@ class Logger:
         fig_2 = plt.figure()
         plt.bar(names, measurements, width=0.5)
         plt.title("Figure 2: Frequency of Total Marks with Total Mean(1), Median(2) and Mode(3)")
-        plt.ylim(0, 100)
+
+        if min(measurements) >= 5:
+            lower = min(measurements) - 5
+        else:
+            lower = 0
+
+        if max(measurements) <= 95:
+            upper = max(measurements) + 5
+        else:
+            upper = 100
+
+        plt.ylim(lower, upper)
+        
         # plt.show()
         fig_2.savefig(visuals_folderpath+"_Mean_Mode_Median.png")
         png_files.append(visuals_folderpath+"_Mean_Mode_Median.png")

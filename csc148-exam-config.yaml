@@ -1,0 +1,55 @@
+---
+program:
+    M.A.R.K
+assignments:
+    # ==========================================================================
+    - name:
+          final_exam
+      student_submission_directory:
+          # ./Final_demailir_submissions
+          ./mock_submissions
+      starter_code_directory:
+          ./starter_code
+      file_name_pattern:
+          UTORID-CSC148-EXAM-Result.txt # i.e. UTORID-CSC148-ASSIGNMENT#-Result.txt # It is crucial for UTORID and ASSIGNMENT# to be there since they get parsed.
+      injection_locations:  # relative to where it would be in the starter code
+          - /Q1-testcases/mirror.py
+          - /Q4-testcases/partition.py
+          - /Q7-testcases/primes.py
+          - /Q6.4-testcases/filter.py
+          - /Q2.1-testcases/EfficientStack.py
+
+      tests: # things under here needs to be fixed.
+          - prep_command: echo "Marking Question 1"
+            marking_command: python3 ./Q1-testcases/exam_q1_unittest.py
+            timeout: 10
+            worth: 0.2  # 5/25
+          - prep_command: echo "Marking Question 2.1"
+            marking_command: python3 ./Q2.1-testcases/exam_q2.1_unittest.py
+            timeout: 10
+            worth: 0.16  # 4/25
+          - prep_command: echo "Marking Question 4"
+            marking_command: python3 ./Q4-testcases/exam_q4_unittest.py
+            timeout: 10 # if not needed, set as -1
+            worth: 0.24  # 6/25
+          - prep_command: echo "Marking Question 6.4"
+            marking_command: python3 ./Q6.4-testcases/exam_q6.4_unittest.py
+            timeout: 10
+            worth: 0.12  # 3/25
+          - prep_command: echo "Marking Question 7"
+            marking_command: python3 ./Q7-testcases/exam_q7_unittest.py
+            timeout: 10
+            worth: 0.28  # 7/25
+
+      total_worth:
+          100
+      creates_analytics_file:
+          True # it can save it in a txt file ready for usage
+      creates_csv_file:
+          True # comment
+      to_percents:
+          False # final values to percents as QOL feature.
+    # ==========================================================================
+does_clean_flag: False # burn time full wiping the leftovers?
+
+...
