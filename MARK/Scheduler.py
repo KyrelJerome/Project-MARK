@@ -54,11 +54,11 @@ class Scheduler:
                 location_from = self.student_submission_directory + "/" + student_utorid + "/" + submission_location
                 location_to = student_container + os.path.dirname(injections)
 
-                if Common.FileUtility.doesFileExist(location_from + injections):
-                    print("- Found " + location_from + injections)
+                if Common.FileUtility.doesFileExist(location_from):
+                    print("- Found " + location_from)
                     shutil.copy(location_from, location_to)
                 else:
-                    print("- WARNING: Could not find file: " + location_from + injections)
+                    print("- WARNING: Could not find file: " + location_from)
                     print("- Using a blank file instead.")
                     location_from_blank = self.blanks_dir + injections
                     shutil.copy(location_from_blank, location_to)
@@ -87,7 +87,7 @@ class Scheduler:
                     os.chdir(anchor)
 
                     # Adapter
-                    my_adapter = Adapters.BaseAdapter()
+                    my_adapter = Adapters.ExamAdapter()
                     results_object = my_adapter.parseOutput(output)
                     results_object.set_question_name("Output of \"" + test.marking_command + "\"")
                     results_object.add_note(output)
@@ -124,7 +124,7 @@ class Scheduler:
 
 
 
-    # TODO: Maybe change the location of this method from Scheduler to either Util or Logger. Feels more appropriate if it's placed there. 
+    # TODO: Maybe change the location of this method from Scheduler to either Util or Logger. Feels more appropriate if it's placed there.
     def createStudentReceipt(self, sm_object, location_of_receipt):
         print(" - Creating receipt")
         # Creating The Receipt Body
