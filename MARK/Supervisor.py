@@ -24,6 +24,7 @@ class Supervisor:
             # Creating Directory Addresses
             container_path = path + assignment.name + "-marking-container"
             receipt_path = path + "student_marks"
+            analytics_path = receipt_path + "/" +"analytics"
             blanks_path = path + "blanks"
 
             # Creating Base Container
@@ -35,6 +36,7 @@ class Supervisor:
             if os.path.isdir(receipt_path):
                 shutil.rmtree(receipt_path)
             os.mkdir(receipt_path)
+            os.mkdir(analytics_path)
 
             # Creating Blanks Directory If Necessary
             if not os.path.isdir(blanks_path):
@@ -55,8 +57,8 @@ class Supervisor:
 
 
             lc_object = Logger.Logger(resultsList)  #resultsList is a list filled with StudentModel elements
-            lc_object.createCSV(container_path, assignment.name)
-            lc_object.createAnalytics(container_path, assignment.name, True) # Third Parameter is the visualizer
+            lc_object.createCSV(analytics_path, assignment.name)
+            lc_object.createAnalytics(analytics_path, assignment.name, True) # Third Parameter is the visualizer
 
             # PROTOTYPE: I was thinking about how it basically grabs the student marks folder that has all the receipts, grabs the csv and the anayltics and the html visualizer file, puts them in one dir and then zips them up ready to go.
             # lc_object.giftWrap(recipts_dir_path)
