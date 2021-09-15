@@ -41,6 +41,10 @@ class Scheduler:
 
         for student_utorid in self.utorids:
 
+            # Making sure the MacOS file does not trip the marking
+            if student_utorid == ".DS_Store":
+                continue
+
             # create env - making exclusive starter code.
             student_container = self.base_dir + "/" + student_utorid
             shutil.copytree(self.starter_code_directory, student_container)
