@@ -21,13 +21,25 @@ class Supervisor:
 
             print("- Creating container for \"{}\".\n".format(assignment.name))
 
-            # Creating Base Container
+            # Creating Directory Addresses
             container_path = path + assignment.name + "-marking-container"
+            receipt_path = path + "student_marks"
+            blanks_path = path + "blanks"
+
+            # Creating Base Container
+            if os.path.isdir(container_path):
+                shutil.rmtree(container_path)
             os.mkdir(container_path)
 
-            # Getting Directories
-            blanks_path = path + "blanks"
-            receipt_path = path + "student_marks"
+            # Creating Marks Directory
+            if os.path.isdir(receipt_path):
+                shutil.rmtree(receipt_path)
+            os.mkdir(receipt_path)
+
+            # Creating Blanks Directory If Necessary
+            if not os.path.isdir(blanks_path):
+                os.mkdir(blanks_path)
+
 
             # Handling the Scheduler
             assignment_scheduler = Scheduler(receipt_path ,blanks_path, container_path, assignment)

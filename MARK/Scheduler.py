@@ -39,8 +39,6 @@ class Scheduler:
         def signal_handler(signum, frame):
             raise Exception("Timed out.")
 
-        os.mkdir(self.student_marks_dir)
-
         for student_utorid in self.utorids:
 
             # create env - making exclusive starter code.
