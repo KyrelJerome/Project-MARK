@@ -16,9 +16,6 @@ class AssignmentModel:
 
         self.file_name_pattern = assignment_config["file_name_pattern"]
 
-        # what if this isn't a number?
-        self.total_worth = assignment_config["total_worth"]
-
         # what if not boolean?
         self.creates_analytics_file = assignment_config["creates_analytics_file"]
 
@@ -53,7 +50,6 @@ class AssignmentModel:
         message += "Where the student submissions are placed: \n\t\"" + self.student_submission_directory + "\"\n"
         message += "Where the starter code for this assignment is placed: \n\t\"" + self.starter_code_directory + "\"\n"
         message += "The receipts will follow the naming convention: \n\t\"" + self.file_name_pattern + "\"\n"
-        message += "Total mark: " + self.total_worth + "\n"
         message += "Analyttics file will be created: " + self.creates_analytics_file + "\n"
         message += "CSV file will be created: " + self.creates_csv_file + "\n"
         message += "Final mark will be in percent: " + self.to_percents + "\n"

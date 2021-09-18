@@ -23,9 +23,6 @@ assignments:
             marking_command: python3 autograder2.py arg1 arg2
             timeout: 60 # if not needed, set as -1
             worth: 0.8   # needs to be between 0 and 1
-
-      total_worth:
-          val_here
       creates_analytics_file:
           True/False # it can save it in a txt file ready for usage
       creates_csv_file:
@@ -55,8 +52,6 @@ assignments:
     #             - command: python3 autograder2.py arg1 arg2
     #               timeout: 60 # if not needed, set as -1
     #               worth: 0.8   # needs to be between 0 and 1
-    #   total_worth:
-    #       val_here
     #   creates_analytics_file:
     #       True/False # it can save it in a txt file ready for usage
     #   creates_csv_file:
