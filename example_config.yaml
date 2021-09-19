@@ -27,8 +27,6 @@ assignments:
           True/False # it can save it in a txt file ready for usage
       creates_csv_file:
           True/False
-      to_percents:
-          True/False # final values to percents as QOL feature.
     # ==========================================================================
     # - name:
     #       assignment2
@@ -56,8 +54,6 @@ assignments:
     #       True/False # it can save it in a txt file ready for usage
     #   creates_csv_file:
     #       True/False
-    #   to_percents:
-    #       True/False # final values to percents as QOL feature.
     # ==========================================================================
 
 does_clean_flag: True/False # burn time full wiping the leftovers?

@@ -29,7 +29,6 @@ class Scheduler:
 
         self.file_name_pattern = assignmentModel.file_name_pattern
 
-        self.student_marks_dir = self.base_dir + "/../student_marks"
         self.student_marks = [] # a list full of student_models
 
     def markAll(self):
@@ -151,4 +150,4 @@ class Scheduler:
             raise FileNotFoundError("student_submission_directory: Invalid file path within configuration.")
 
     def getAssignmentResults(self):
-        return self.student_marks, self.student_marks_dir
+        return self.student_marks

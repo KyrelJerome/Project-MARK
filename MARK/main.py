@@ -18,7 +18,7 @@ def run()-> None:
 
     print("- Running Supervisor")
     sup = Supervisor(config_object)
-    sup.run("./")
+    sup.run("../") #Gonna put the products of project mark outside of the guts of project mark for more visual organization
 
 
 def parse_arguments():

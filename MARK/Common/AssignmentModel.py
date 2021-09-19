@@ -22,9 +22,6 @@ class AssignmentModel:
         # what if not boolean?
         self.creates_csv_file = assignment_config["creates_csv_file"]
 
-        # what if not boolean?
-        self.to_percents = assignment_config["to_percents"]
-
         # what if it fails to create a TestModel object?
         self.tests = []
         for test_config in assignment_config["tests"]:
@@ -52,7 +49,6 @@ class AssignmentModel:
         message += "The receipts will follow the naming convention: \n\t\"" + self.file_name_pattern + "\"\n"
         message += "Analyttics file will be created: " + self.creates_analytics_file + "\n"
         message += "CSV file will be created: " + self.creates_csv_file + "\n"
-        message += "Final mark will be in percent: " + self.to_percents + "\n"
 
         message += "The test suits that are present in the assignment configuration are: \n"
         for test in self.tests:
