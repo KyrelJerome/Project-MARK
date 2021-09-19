@@ -23,8 +23,17 @@ class Supervisor:
 
             # Creating Directory Addresses
             container_path = path + assignment.name + "-marking-container"
-            receipt_path = path + "student_marks"
-            analytics_path = receipt_path + "/" +"analytics"
+
+            receipt_path = path + assignment.name + "-student-marks"
+
+            # By Default making sure not override the old student_marks.
+            if os.path.isdir(receipt_path):
+                count = 1
+                while os.path.isdir(receipt_path+"-"+str(count)):
+                    count+=1
+                receipt_path = receipt_path+"-"+str(count)
+
+            analytics_path = receipt_path + "/analytics"
             blanks_path = path + "blanks"
 
             # Creating Base Container
