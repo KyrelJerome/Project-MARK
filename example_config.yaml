@@ -4,58 +4,30 @@ program:
 assignments:
     # ==========================================================================
     - name:
-          assignment1
+          Lab01
       student_submission_directory:
-          ./student_submissions
+          ./lab02_student-marks
       starter_code_directory:
           ./starter_code
       file_name_pattern:
-          filename # i.e. UTORID-CSC148-ASSIGNMENT#-Result.txt # It is crucial for UTORID and ASSIGNMENT# to be there since they get parsed.
+          UTORID-CSC207-ASSIGNMENTLAB2 # i.e. UTORID-CSC148-ASSIGNMENT#-Result.txt # It is crucial for UTORID and ASSIGNMENT# to be there since they get parsed.
       injection_locations:  # relative to where it would be in the starter code
-          - /submission1.txt
+          - /lab02/src/lab02/PersonTest.java
+          - /lab02/src/lab02/SodaCanTest.java
 
       tests: # things under here needs to be fixed.
-          - prep_command: command 1
-            marking_command: echo "python3 autograder1.py arg1 arg2"
-            timeout: 40 # if not needed, set as -1
-            worth: 0.2  # needs to be between 0 and 1
-          - prep_command: command 2
+          - prep_command: "javac -cp lab02/src/lab02/junit-4.12.jar:"
+            marking_command: echo "java -cp lab02/src/lab02/*.java"
+            timeout: -1 # if not needed, set as -1
+            worth: 0.5  # needs to be between 0 and 1
+          - prep_command: javac -cp lab02/src/lab02/*.java
             marking_command: python3 autograder2.py arg1 arg2
-            timeout: 60 # if not needed, set as -1
-            worth: 0.8   # needs to be between 0 and 1
+            timeout: -1 # if not needed, set as -1
+            worth: 0.5   # needs to be between 0 and 1
       creates_analytics_file:
           True/False # it can save it in a txt file ready for usage
       creates_csv_file:
           True/False
-    # ==========================================================================
-    # - name:
-    #       assignment2
-    #   student_submission_directory:
-    #       dir_name1
-    #   starter_code_directory:
-    #       dir_name
-    #   file_name_pattern:
-    #       filename # i.e. UTORID-CSC148-Assignment#-Result.txt
-    #   tests:
-    #       - name:
-    #             test_suite_1
-    #         prep_commands:
-    #             - command 1
-    #             - command 2
-    #             - command 3
-    #         marking_commands: # things under here needs to be fixed.
-    #             - command: python3 autograder1.py arg1 arg2
-    #               timeout: 40 # if not needed, set as -1
-    #               worth: 0.2  # needs to be between 0 and 1
-    #             - command: python3 autograder2.py arg1 arg2
-    #               timeout: 60 # if not needed, set as -1
-    #               worth: 0.8   # needs to be between 0 and 1
-    #   creates_analytics_file:
-    #       True/False # it can save it in a txt file ready for usage
-    #   creates_csv_file:
-    #       True/False
-    # ==========================================================================
-
 does_clean_flag: True/False # burn time full wiping the leftovers?
 
 ...
